@@ -1,0 +1,34 @@
+﻿@using ToDoList.Client.Components
+@using ToDoList.Shared
+@page "/todo"
+
+<input placeholder="Something todo" @bind="cardTitle" @onkeyup="@(e => AddToCards(e))" />
+@foreach (var card in  cardLst)
+{
+    <div>
+        <ToDoCard Title="@cardTitle" />
+    </div>
+}
+
+@code{
+
+    public string cardTitle { get; set; }
+
+    private List<TodoCardModel> cardLst = new List<TodoCardModel>();
+    //List<TodoItemModel> card = new List<TodoItemModel>();
+
+    private void AddToCards(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            if (!string.IsNullOrWhiteSpace(cardTitle))
+            {
+                TodoItemModel item = new TodoItemModel();
+                TodoCardModel cc = new TodoCardModel();
+                //card.Add(item);
+                cardLst.Add(new TodoCardModel { Title = cardTitle });
+                //cardTitle = string.Empty;
+            }
+        }
+    }
+}
