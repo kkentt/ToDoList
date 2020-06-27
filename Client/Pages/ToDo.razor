@@ -5,31 +5,32 @@
 @*<h3>
         <input placeholder="Title" @bind="cardTitle" @onkeyup="@(e => AddCard(e))" />
     </h3>*@
-@if (tempCard.Title != null)
-{
-    <h3>@tempCard.Title</h3>
-}
 
-<ul style="list-style: none;">
-    @if (tempCard.Card != null)
+<div style="background-color:cyan">
+    @if (tempCard.Title != null)
     {
-        @foreach (var item in tempCard.Card)
-        {
-            <li>
-                <input type="checkbox" @bind="item.IsDone" />
-                @if (item.IsDone)
-                {
-                    <del>@item.Task</del>
-                }
-                else
-                {
-                    @item.Task
-                }
-            </li>
-        }
+        <h3>@tempCard.Title</h3>
     }
-
-</ul>
+    <ul style="list-style: none;">
+        @if (tempCard.Card != null)
+        {
+            @foreach (var item in tempCard.Card)
+            {
+                <li>
+                    <input type="checkbox" @bind="item.IsDone" />
+                    @if (item.IsDone)
+                    {
+                        <del>@item.Task</del>
+                    }
+                    else
+                    {
+                        @item.Task
+                    }
+                </li>
+            }
+        }
+    </ul>
+</div>
 
 <h2>
     @if (tempCard.Title == null)

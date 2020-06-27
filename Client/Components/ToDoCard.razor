@@ -1,7 +1,7 @@
 ﻿@page "/ToDoCard"
 @using ToDoList.Shared
 
-    <div class="card" style="width:300px;">
+    <div class="card" style="width:300px;background-color:aquamarine">
         <h3> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
         <ul style="list-style: none;">
             @foreach (var item in itemLst)
