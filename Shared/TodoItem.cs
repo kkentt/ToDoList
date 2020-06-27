@@ -14,7 +14,7 @@ namespace ToDoList.Shared
     public class TodoCardModel
     {
        public string Title { get; set; }
-       public List<TodoItemModel> Card { get; set; }
+        public List<TodoItemModel> Card = new List<TodoItemModel>();
     }
 
 

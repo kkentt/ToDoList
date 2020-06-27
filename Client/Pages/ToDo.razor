@@ -1,33 +1,102 @@
 ﻿@using ToDoList.Client.Components
 @using ToDoList.Shared
 @page "/todo"
-
-<input placeholder="Something todo" @bind="cardTitle" @onkeyup="@(e => AddToCards(e))" />
-@foreach (var card in  cardLst)
+<!-- Temp Card-->
+@*<h3>
+        <input placeholder="Title" @bind="cardTitle" @onkeyup="@(e => AddCard(e))" />
+    </h3>*@
+@if (tempCard.Title != null)
 {
-    <div>
-        <ToDoCard Title="@cardTitle" />
-    </div>
+    <h3>@tempCard.Title</h3>
 }
+
+<ul style="list-style: none;">
+    @if (tempCard.Card != null)
+    {
+        @foreach (var item in tempCard.Card)
+        {
+            <li>
+                <input type="checkbox" @bind="item.IsDone" />
+                @if (item.IsDone)
+                {
+                    <del>@item.Task</del>
+                }
+                else
+                {
+                    @item.Task
+                }
+            </li>
+        }
+    }
+
+</ul>
+
+<h2>
+    @if (tempCard.Title == null)
+    {
+        <input placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
+    }
+    else
+    {
+        <input placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
+    }
+</h2>
+
+<!--End-->
+<!--Component Card-->
+@*@foreach (var card in cardLst)
+    {
+        <div>
+            <ToDoCard Title="@cardTitle" />
+        </div>
+    }*@
+<!--End-->
+
 
 @code{
 
+    //Temp Card
+    public TodoCardModel tempCard = new TodoCardModel();
     public string cardTitle { get; set; }
+    private string newTodo { get; set; }
+    //end
+
 
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
-    //List<TodoItemModel> card = new List<TodoItemModel>();
+    private List<TodoItemModel> itemLst = new List<TodoItemModel>();
 
-    private void AddToCards(KeyboardEventArgs e)
+    private void AddItem(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            if (tempCard.Title == null)
+            {
+                tempCard.Title = newTodo;
+            }
+            else
+            {
+                tempCard.Card.Add(new TodoItemModel() { Task = newTodo });
+            }
+            newTodo = null;
+        }
+    }
+
+    private void AddCard(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
         {
             if (!string.IsNullOrWhiteSpace(cardTitle))
             {
-                TodoItemModel item = new TodoItemModel();
-                TodoCardModel cc = new TodoCardModel();
-                //card.Add(item);
-                cardLst.Add(new TodoCardModel { Title = cardTitle });
-                //cardTitle = string.Empty;
+                tempCard.Title = cardTitle;
+                cardTitle = string.Empty;
+
+                cardLst.Add(tempCard);
+
+
+                //passing to card component part
+                //TodoItemModel item = new TodoItemModel();
+                //TodoCardModel cc = new TodoCardModel();
+                //cardLst.Add(new TodoCardModel { Title = cardTitle });
             }
         }
     }
