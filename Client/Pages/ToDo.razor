@@ -6,34 +6,37 @@
         <input placeholder="Title" @bind="cardTitle" @onkeyup="@(e => AddCard(e))" />
     </h3>*@
 
-<div style="background-color:orangered">
-    @if (tempCard.Title != null)
-    {
-        <h3>@tempCard.Title</h3>
-    }
-    <ul style="list-style: none;">
-        @if (tempCard.Card != null)
-        {
-            @foreach (var item in tempCard.Card)
+<div class="card col-md-4" style="background-color:bisque;margin:0 auto;" @onkeyup="@(e => AddCard(e))">
+    <div class="card-header">
+        @if (tempCard.Title != null)
             {
-                <li>
-                    <input type="checkbox" @bind="item.IsDone" />
-                    @if (item.IsDone)
+        <h3>@tempCard.Title</h3>
+            }
+    </div>
+    <div class="card-body">
+        <ul style="list-style: none;">
+            @if (tempCard.Items != null)
+        {
+            @foreach (var item in tempCard.Items)
+            {
+            <li>
+                <input type="checkbox" @bind="item.IsDone" />
+                @if (item.IsDone)
                     {
-                        <del>@item.Task</del>
+                <del>@item.Task</del>
                     }
                     else
                     {
-                        @item.Task
+                @item.Task
                     }
-                </li>
+            </li>
             }
         }
-    </ul>
-</div>
+        </ul>
+    </div>
 
-<h2>
-    @if (tempCard.Title == null)
+    <h2>
+        @if (tempCard.Title == null)
     {
         <input placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
     }
@@ -41,23 +44,23 @@
     {
         <input placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
     }
-</h2>
+    </h2>
 
-<!--End-->
-<!--Component Card-->
-@*@foreach (var card in cardLst)
+</div>
+
+@*Component Card*@
+@foreach (var card in cardLst)
     {
-        <div>
-            <ToDoCard Title="@cardTitle" />
+        <div >
+            <ToDoCard  card="@card" />
         </div>
-    }*@
-<!--End-->
-
+    }
+@*End*@
 
 @code{
 
     //Temp Card
-    public TodoCardModel tempCard = new TodoCardModel();
+    private TodoCardModel tempCard = new TodoCardModel();
     public string cardTitle { get; set; }
     private string newTodo { get; set; }
     //end
@@ -76,7 +79,7 @@
             }
             else
             {
-                tempCard.Card.Add(new TodoItemModel() { Task = newTodo });
+                tempCard.Items.Add(new TodoItemModel() { Task = newTodo });
             }
             newTodo = null;
         }
@@ -84,20 +87,14 @@
 
     private void AddCard(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter")
+        if (e.Key == "Escape")
         {
-            if (!string.IsNullOrWhiteSpace(cardTitle))
+            if (!string.IsNullOrWhiteSpace(tempCard.Title))
             {
-                tempCard.Title = cardTitle;
-                cardTitle = string.Empty;
-
-                cardLst.Add(tempCard);
-
-
-                //passing to card component part
-                //TodoItemModel item = new TodoItemModel();
-                //TodoCardModel cc = new TodoCardModel();
-                //cardLst.Add(new TodoCardModel { Title = cardTitle });
+                TodoCardModel test = new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items };
+                cardLst.Add(test);
+                tempCard.Title = null;
+                tempCard.Items = new List<TodoItemModel>();
             }
         }
     }

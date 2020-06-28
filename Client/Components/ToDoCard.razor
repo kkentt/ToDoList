@@ -4,7 +4,7 @@
     <div class="card" style="width:300px;background-color:aquamarine">
         <h3> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
         <ul style="list-style: none;">
-            @foreach (var item in itemLst)
+            @foreach (var item in card.Items)
             {
                 <li>
                     <input type="checkbox" @bind="item.IsDone" />
@@ -25,18 +25,13 @@
 @code {
 
     private string newTodo;
-    [Parameter]
     public string Title { get; set; }
     public List<TodoItemModel> itemLst = new List<TodoItemModel>();
 
-    public TodoCardModel card = new TodoCardModel();
+    [Parameter]
+    public TodoCardModel card { get; set; }
+
     public List<TodoCardModel> cardLst = new List<TodoCardModel>();
-
-    protected override void OnInitialized() 
-    {
-        card.Title = Title;
-    }
-
 
     private void AddToDo(KeyboardEventArgs e)
     {
@@ -44,10 +39,13 @@
         {
             if (!string.IsNullOrWhiteSpace(newTodo))
             {
-                //itemLst.Add(new TodoItemModel { Task = newTodo });
-                itemLst.Add(new TodoItemModel() { Task = newTodo });
-                card = new TodoCardModel() { Title = Title, Card = itemLst};
-                cardLst.Add(card);
+                card.Items.Add(new TodoItemModel { Task = newTodo });
+
+
+
+                //itemLst.Add(new TodoItemModel() { Task = newTodo });
+                //card = new TodoCardModel() { Title = Title, Items = itemLst};
+                //cardLst.Add(card);
                 newTodo = string.Empty;
             }
         }
