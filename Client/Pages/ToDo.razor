@@ -6,55 +6,55 @@
         <input placeholder="Title" @bind="cardTitle" @onkeyup="@(e => AddCard(e))" />
     </h3>*@
 
-<div class="card col-md-4" style="background-color:bisque;margin:0 auto;" @onkeyup="@(e => AddCard(e))">
-    <div class="card-header">
-        @if (tempCard.Title != null)
-            {
-        <h3>@tempCard.Title</h3>
-            }
-    </div>
-    <div class="card-body">
-        <ul style="list-style: none;">
-            @if (tempCard.Items != null)
-        {
-            @foreach (var item in tempCard.Items)
-            {
-            <li>
-                <input type="checkbox" @bind="item.IsDone" />
-                @if (item.IsDone)
+<div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
+    <div class="card">
+        <div class="card-container">
+            <div class="card-header">
+                @if (tempCard.Title != null)
+                {
+                    <h3>@tempCard.Title</h3>
+                }
+            </div>
+            <div class="card-body">
+                <ul style="list-style: none;">
+                    @if (tempCard.Items != null)
                     {
-                <del>@item.Task</del>
+                        @foreach (var item in tempCard.Items)
+                        {
+                            <li>
+                                <input type="checkbox" @bind="item.IsDone" />
+                                @if (item.IsDone)
+                                {
+                                    <del>@item.Task</del>
+                                }
+                                else
+                                {
+                                    @item.Task
+                                }
+                            </li>
+                        }
                     }
-                    else
-                    {
-                @item.Task
-                    }
-            </li>
+                </ul>
+            </div>
+            @if (tempCard.Title == null)
+            {
+                <input style="width:100%;" placeholder="Title"  @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
             }
-        }
-        </ul>
+            else
+            {
+                <input style="width:100%;" placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
+            }
+        </div>
+        </div>
     </div>
-
-    <h2>
-        @if (tempCard.Title == null)
-    {
-        <input placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
-    }
-    else
-    {
-        <input placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
-    }
-    </h2>
-
-</div>
 
 @*Component Card*@
 @foreach (var card in cardLst)
-    {
-        <div >
-            <ToDoCard  card="@card" />
-        </div>
-    }
+{
+    <div>
+        <ToDoCard card="@card" />
+    </div>
+}
 @*End*@
 
 @code{
