@@ -1,16 +1,12 @@
 ﻿@using ToDoList.Client.Components
 @using ToDoList.Shared
 @page "/todo"
-<!-- Temp Card-->
-@*<h3>
-        <input placeholder="Title" @bind="cardTitle" @onkeyup="@(e => AddCard(e))" />
-    </h3>*@
 
 <div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
     <div class="card">
         <div class="card-container">
             <div class="card-header">
-                @if (tempCard.Title != null)
+                @if (!string.IsNullOrEmpty(tempCard.Title))
                 {
                     <h3>@tempCard.Title</h3>
                 }
@@ -36,17 +32,17 @@
                     }
                 </ul>
             </div>
-            @if (tempCard.Title == null)
+            @if (string.IsNullOrEmpty(tempCard.Title))
             {
-                <input style="width:100%;" placeholder="Title"  @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
+                <input style="width:100%;" placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
             }
             else
             {
                 <input style="width:100%;" placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
             }
         </div>
-        </div>
     </div>
+</div>
 
 @*Component Card*@
 @foreach (var card in cardLst)
@@ -58,13 +54,11 @@
 @*End*@
 
 @code{
-
     //Temp Card
     private TodoCardModel tempCard = new TodoCardModel();
     public string cardTitle { get; set; }
     private string newTodo { get; set; }
     //end
-
 
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
     private List<TodoItemModel> itemLst = new List<TodoItemModel>();
@@ -73,7 +67,7 @@
     {
         if (e.Key == "Enter")
         {
-            if (tempCard.Title == null)
+            if (string.IsNullOrEmpty(tempCard.Title))
             {
                 tempCard.Title = newTodo;
             }
@@ -91,9 +85,9 @@
         {
             if (!string.IsNullOrWhiteSpace(tempCard.Title))
             {
-                TodoCardModel test = new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items };
-                cardLst.Add(test);
-                tempCard.Title = null;
+                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items });
+                // reset tempCard
+                tempCard.Title = string.Empty;
                 tempCard.Items = new List<TodoItemModel>();
             }
         }

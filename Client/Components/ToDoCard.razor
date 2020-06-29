@@ -1,26 +1,26 @@
 ﻿@page "/ToDoCard"
 @using ToDoList.Shared
 
-    <div class="card" style="width:300px;background-color:aquamarine">
-        <h3> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
-        <ul style="list-style: none;">
-            @foreach (var item in card.Items)
-            {
-                <li>
-                    <input type="checkbox" @bind="item.IsDone" />
-                    @if (item.IsDone)
-                    {
-                        <del>@item.Task</del>
-                    }
-                    else
-                    {
-                        @item.Task
-                    }
-                </li>
-            }
-        </ul>
-        <input placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" />
-    </div>
+<div class="card" style="width:300px;background-color:aquamarine">
+    <h3> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
+    <ul style="list-style: none;">
+        @foreach (var item in card.Items)
+        {
+            <li>
+                <input type="checkbox" @bind="item.IsDone" />
+                @if (item.IsDone)
+                {
+                    <del>@item.Task</del>
+                }
+                else
+                {
+                    @item.Task
+                }
+            </li>
+        }
+    </ul>
+    <input placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" />
+</div>
 
 @code {
 
@@ -35,17 +35,11 @@
 
     private void AddToDo(KeyboardEventArgs e)
     {
-        if(e.Key == "Enter")
+        if (e.Key == "Enter")
         {
             if (!string.IsNullOrWhiteSpace(newTodo))
             {
                 card.Items.Add(new TodoItemModel { Task = newTodo });
-
-
-
-                //itemLst.Add(new TodoItemModel() { Task = newTodo });
-                //card = new TodoCardModel() { Title = Title, Items = itemLst};
-                //cardLst.Add(card);
                 newTodo = string.Empty;
             }
         }
