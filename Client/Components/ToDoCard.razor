@@ -1,7 +1,9 @@
 ﻿@page "/ToDoCard"
 @using ToDoList.Shared
+@inject IJSRuntime JSRuntime
 
-<div class="card" style="width:300px;background-color:aquamarine">
+<div class="item">
+    @*removed card cls to test and width 300px and bgcolor*@
     <h3> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
     <ul style="list-style: none;">
         @foreach (var item in card.Items)
@@ -32,6 +34,23 @@
     public TodoCardModel card { get; set; }
 
     public List<TodoCardModel> cardLst = new List<TodoCardModel>();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+            base.OnAfterRender(firstRender);
+            ActivateFreeWallJs();
+        }
+
+    private void ActivateFreeWallJs()
+    {
+        JSRuntime.InvokeVoidAsync(
+              "UIJsLibraryFunctions.activateFreeWall",
+              "container");
+
+        //await JSRuntime.InvokeVoidAsync(
+        //     "exampleJsFunctions.displayWelcome",
+        //     $"Hello {name}! Welcome to Blazor!");
+    }
 
     private void AddToDo(KeyboardEventArgs e)
     {

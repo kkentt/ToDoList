@@ -1,6 +1,21 @@
-﻿@using ToDoList.Client.Components
+﻿@page "/todo"
 @using ToDoList.Shared
-@page "/todo"
+@using ToDoList.Client.Components
+@inject IJSRuntime JSRuntime
+
+<style>
+    #container {
+        width: 80%;
+        margin:auto;
+    }
+
+    .item{
+        background: rgb(135, 199, 135);
+        width: 200px;
+        /*height: 320px;*/
+    }
+
+</style>
 
 <div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
     <div class="card">
@@ -45,12 +60,13 @@
 </div>
 
 @*Component Card*@
-@foreach (var card in cardLst)
-{
-    <div>
+<div id="container">
+    @foreach (var card in cardLst)
+    {
         <ToDoCard card="@card" />
-    </div>
-}
+    }
+</div>
+
 @*End*@
 
 @code{
@@ -92,4 +108,19 @@
             }
         }
     }
+
+    //protected override void OnInitialized()
+    //{
+    //    base.OnInitialized();
+    //}
+
+    //protected override bool ShouldRender()
+    //{
+    //    ActivateFreeWallJs();
+    //    return base.ShouldRender();
+    //}
+
+  
 }
+
+
