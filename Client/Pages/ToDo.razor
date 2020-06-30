@@ -12,62 +12,63 @@
     .item{
         background: rgb(135, 199, 135);
         width: 200px;
-        /*height: 320px;*/
+        height:auto !important;
     }
 
 </style>
 
-<div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
-    <div class="card">
-        <div class="card-container">
-            <div class="card-header">
-                @if (!string.IsNullOrEmpty(tempCard.Title))
+<div @onclick="AddCard">
+    <div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
+        <div class="card">
+            <div class="card-container">
+                <div class="card-header">
+                    @if (!string.IsNullOrEmpty(tempCard.Title))
+                    {
+                        <h3>@tempCard.Title</h3>
+                    }
+                </div>
+                <div class="card-body">
+                    <ul style="list-style: none;">
+                        @if (tempCard.Items != null)
+                        {
+                            @foreach (var item in tempCard.Items)
+                            {
+                                <li>
+                                    <input type="checkbox" @bind="item.IsDone" />
+                                    @if (item.IsDone)
+                                    {
+                                        <del>@item.Task</del>
+                                    }
+                                    else
+                                    {
+                                        @item.Task
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+                @if (string.IsNullOrEmpty(tempCard.Title))
                 {
-                    <h3>@tempCard.Title</h3>
+                    <input style="width:100%;" placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
+                }
+                else
+                {
+                    <input style="width:100%;" placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
                 }
             </div>
-            <div class="card-body">
-                <ul style="list-style: none;">
-                    @if (tempCard.Items != null)
-                    {
-                        @foreach (var item in tempCard.Items)
-                        {
-                            <li>
-                                <input type="checkbox" @bind="item.IsDone" />
-                                @if (item.IsDone)
-                                {
-                                    <del>@item.Task</del>
-                                }
-                                else
-                                {
-                                    @item.Task
-                                }
-                            </li>
-                        }
-                    }
-                </ul>
-            </div>
-            @if (string.IsNullOrEmpty(tempCard.Title))
-            {
-                <input style="width:100%;" placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
-            }
-            else
-            {
-                <input style="width:100%;" placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
-            }
         </div>
     </div>
-</div>
 
-@*Component Card*@
-<div id="container">
-    @foreach (var card in cardLst)
-    {
-        <ToDoCard card="@card" />
-    }
+    @*Card Component*@
+    <div id="container">
+        @foreach (var card in cardLst)
+        {
+            <ToDoCard card="@card" />
+        }
+    </div>
+    @*End*@
 </div>
-
-@*End*@
 
 @code{
     //Temp Card
@@ -78,6 +79,7 @@
 
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
     private List<TodoItemModel> itemLst = new List<TodoItemModel>();
+
 
     private void AddItem(KeyboardEventArgs e)
     {
@@ -109,6 +111,18 @@
         }
     }
 
+    private void AddCard(MouseEventArgs m)
+    {
+            if (!string.IsNullOrWhiteSpace(tempCard.Title))
+            {
+                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items });
+                // reset tempCard
+                tempCard.Title = string.Empty;
+                tempCard.Items = new List<TodoItemModel>();
+            }
+    }
+
+
     //protected override void OnInitialized()
     //{
     //    base.OnInitialized();
@@ -120,7 +134,7 @@
     //    return base.ShouldRender();
     //}
 
-  
+
 }
 
 
