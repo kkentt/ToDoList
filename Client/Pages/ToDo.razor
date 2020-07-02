@@ -50,11 +50,11 @@
                 </div>
                 @if (string.IsNullOrEmpty(tempCard.Title))
                 {
-                    <input style="width:100%;" placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
+                    <input style="width:100%;" placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
                 }
                 else
                 {
-                    <input style="width:100%;" placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" />
+                    <input style="width:100%;" placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
                 }
             </div>
         </div>
@@ -79,7 +79,6 @@
 
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
     private List<TodoItemModel> itemLst = new List<TodoItemModel>();
-
 
     private void AddItem(KeyboardEventArgs e)
     {
@@ -113,28 +112,14 @@
 
     private void AddCard(MouseEventArgs m)
     {
-            if (!string.IsNullOrWhiteSpace(tempCard.Title))
-            {
-                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items });
-                // reset tempCard
-                tempCard.Title = string.Empty;
-                tempCard.Items = new List<TodoItemModel>();
-            }
+        if (!string.IsNullOrWhiteSpace(tempCard.Title))
+        {
+            cardLst.Add(new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items });
+            // reset tempCard
+            tempCard.Title = string.Empty;
+            tempCard.Items = new List<TodoItemModel>();
+        }
     }
-
-
-    //protected override void OnInitialized()
-    //{
-    //    base.OnInitialized();
-    //}
-
-    //protected override bool ShouldRender()
-    //{
-    //    ActivateFreeWallJs();
-    //    return base.ShouldRender();
-    //}
-
-
 }
 
 
