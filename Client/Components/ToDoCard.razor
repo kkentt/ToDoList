@@ -20,8 +20,10 @@
                 }
             </li>
         }
+            <li>
+                <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
+            </li>
     </ul>
-    <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
 </div>
 
 @code {

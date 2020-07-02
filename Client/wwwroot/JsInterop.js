@@ -4,7 +4,13 @@
         //var usableId = "#" + id;
         var wall = new Freewall("#container");
         wall.fitWidth();
-        console.log("freewall");
+        wall.fitHeight();
+
+        wall.reset({
+            selector: '.brick',
+            draggable: true,
+            animate: true,
+        });
         //alert("test");
     }
 }
