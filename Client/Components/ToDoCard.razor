@@ -39,17 +39,19 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
-        ActivateMagicGrid();
-    }
+            base.OnAfterRender(firstRender);
+            ActivateFreeWallJs();
+        }
 
-    private void ActivateMagicGrid()
+    private void ActivateFreeWallJs()
     {
-        //JSRuntime.InvokeVoidAsync(
-        //      "UIJsLibraryFunctions.activateFreeWall",
-        //      "container");
+        JSRuntime.InvokeVoidAsync(
+              "UIJsLibraryFunctions.activateFreeWall",
+              "container");
 
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.activateMagicGrid");
+        //await JSRuntime.InvokeVoidAsync(
+        //     "exampleJsFunctions.displayWelcome",
+        //     $"Hello {name}! Welcome to Blazor!");
     }
 
     private void AddToDo(KeyboardEventArgs e)
