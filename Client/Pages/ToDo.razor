@@ -65,7 +65,7 @@
     <div id="container">
         @foreach (var card in cardLst)
         {
-            <ToDoCard card="@card" />
+            <ToDoCard card="@card"/>
         }
     </div>
     @*End*@
@@ -77,6 +77,8 @@
     public string cardTitle { get; set; }
     private string newTodo { get; set; }
     //end
+
+    private int cardNo { get; set; } = 0;
 
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
     private List<TodoItemModel> itemLst = new List<TodoItemModel>();
@@ -103,7 +105,7 @@
         {
             if (!string.IsNullOrWhiteSpace(tempCard.Title))
             {
-                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items });
+                cardLst.Add(new TodoCardModel() { Title = tempCard.Title,  CardNo= cardNo++  , Items = tempCard.Items ,  });
                 // reset tempCard
                 tempCard.Title = string.Empty;
                 tempCard.Items = new List<TodoItemModel>();
@@ -115,7 +117,7 @@
     {
         if (!string.IsNullOrWhiteSpace(tempCard.Title))
         {
-            cardLst.Add(new TodoCardModel() { Title = tempCard.Title, Items = tempCard.Items });
+            cardLst.Add(new TodoCardModel() { Title = tempCard.Title , CardNo = cardNo++, Items = tempCard.Items });
             // reset tempCard
             tempCard.Title = string.Empty;
             tempCard.Items = new List<TodoItemModel>();

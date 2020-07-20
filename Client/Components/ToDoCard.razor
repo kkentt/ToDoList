@@ -25,8 +25,10 @@
             </li>
         </ul>
         <div>
-            <input type="color" id="colorItem" @bind="cardColor"  style="width: 0;height: 0; visibility:hidden" />
-            <span class="material-icons" id="colorPicker" @onclick="TriggerColorPicker" style="cursor: pointer;">color_lens</span>
+            <input type="color" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
+            <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
+                color_lens
+            </span>
             <!-- use inputs so users can set colors with text -->
             @*<i class="material-icons color-button">color_lens</i>*@
 
@@ -48,20 +50,19 @@
     [Parameter]
     public TodoCardModel card { get; set; }
 
+    private string colorPickerId { get { return "colorPicker" + card.CardNo; } }
+
+
+
     public List<TodoCardModel> cardLst = new List<TodoCardModel>();
 
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
         ActivateMagicGrid();
-        ActivateColorPicker();
+        //colorPickerId = "colorPicker" + cardNo;
     }
 
-    private void ActivateColorPicker()
-    {
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.activateColorPicker");
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.getColor");
-    }
     private void ActivateMagicGrid()
     {
         //JSRuntime.InvokeVoidAsync(
@@ -70,9 +71,9 @@
 
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.activateMagicGrid");
     }
-    private void TriggerColorPicker() 
+    private void OpenColorPicker(string colorPickerId)
     {
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.openColorPicker");
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.openColorPicker", colorPickerId);
     }
 
 
