@@ -8,6 +8,16 @@
         });
         magicGrid.listen();
     },
+    initializeColorPickerEvent:()=>
+    {
+        colorWell = document.querySelectorAll(".color-picker");
+        colorWell.forEach( (colorInput) =>  {
+            var container = colorInput.closest('div.item'); 
+            colorInput.addEventListener("input",  (event) => {
+                container.style.background = event.target.value;
+            }, false);
+        });
+    },
     openColorPicker: function (colorPickerId) {
         var id = "#" + colorPickerId;
         $(id).click();

@@ -3,7 +3,6 @@
 @inject IJSRuntime JSRuntime
 
     <div class="item" style="background-color:@cardColor">
-        @*removed card cls to test and width 300px and bgcolor*@
         <h3 style="padding-left:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
         <ul style="list-style: none; padding:10px;">
             @foreach (var item in card.Items)
@@ -25,18 +24,10 @@
             </li>
         </ul>
         <div>
-            <input type="color" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
+            <input type="color" class="color-picker"  id="@colorPickerId"  @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
             <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
                 color_lens
             </span>
-            <!-- use inputs so users can set colors with text -->
-            @*<i class="material-icons color-button">color_lens</i>*@
-
-            <!-- anchors can be buttons -->
-            @*<button class="color-button">Select color</button>*@
-
-            <!-- anchors can be any element -->
-            @*<span class="current-color">Current color</span>*@
         </div>
     </div>
 
@@ -70,6 +61,7 @@
         //      "container");
 
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.activateMagicGrid");
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent");
     }
     private void OpenColorPicker(string colorPickerId)
     {

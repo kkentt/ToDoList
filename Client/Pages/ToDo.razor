@@ -49,14 +49,7 @@
                         }
                     </ul>
                 </div>
-                @if (string.IsNullOrEmpty(tempCard.Title))
-                {
-                    <input style="width:100%;" placeholder="Title" @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
-                }
-                else
-                {
-                    <input style="width:100%;" placeholder="I will do this...." @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
-                }
+                    <input style="width:100%;" placeholder="@inputPlaceHolder" @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
             </div>
         </div>
     </div>
@@ -79,6 +72,7 @@
     //end
 
     private int cardNo { get; set; } = 0;
+    private string inputPlaceHolder = "Title";
 
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
     private List<TodoItemModel> itemLst = new List<TodoItemModel>();
@@ -90,10 +84,12 @@
             if (string.IsNullOrEmpty(tempCard.Title))
             {
                 tempCard.Title = newTodo;
+                inputPlaceHolder = "Title";
             }
             else
             {
                 tempCard.Items.Add(new TodoItemModel() { Task = newTodo });
+                inputPlaceHolder = "I will do this....";
             }
             newTodo = null;
         }
@@ -108,6 +104,7 @@
                 cardLst.Add(new TodoCardModel() { Title = tempCard.Title,  CardNo= cardNo++  , Items = tempCard.Items ,  });
                 // reset tempCard
                 tempCard.Title = string.Empty;
+                inputPlaceHolder = "Title";
                 tempCard.Items = new List<TodoItemModel>();
             }
         }
@@ -120,6 +117,7 @@
             cardLst.Add(new TodoCardModel() { Title = tempCard.Title , CardNo = cardNo++, Items = tempCard.Items });
             // reset tempCard
             tempCard.Title = string.Empty;
+            inputPlaceHolder = "Title";
             tempCard.Items = new List<TodoItemModel>();
         }
     }
