@@ -1,35 +1,38 @@
 ﻿@page "/ToDoCard"
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
-
-    <div class="item" style="background-color:@cardColor">
-        <h3 style="padding-left:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
-        <ul style="list-style: none; padding:10px;">
-            @foreach (var item in card.Items)
-            {
-                <li>
-                    <input type="checkbox" @bind="item.IsDone" />
+<div class="item">
+    <h3 style="padding-left:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
+    <ul style="list-style: none; padding:10px;">
+        @foreach (var item in card.Items)
+        {
+            <li>
+                <div style="display:flex; width:100%;">
+                    <div>
+                        <input type="checkbox" @bind="item.IsDone"  />
+                    </div>
                     @if (item.IsDone)
                     {
-                        <del>@item.Task</del>
+                        <div contenteditable="true" style="width:inherit;"><del>@item.Task</del></div>
                     }
                     else
                     {
-                        @item.Task
+                        <div contenteditable="true"  style="width:inherit">@item.Task</div>
                     }
-                </li>
-            }
-            <li>
-                <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
+                </div>
             </li>
-        </ul>
-        <div>
-            <input type="color" class="color-picker"  id="@colorPickerId"  @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
-            <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
-                color_lens
-            </span>
-        </div>
+        }
+        <li>
+            <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
+        </li>
+    </ul>
+    <div>
+        <input type="color" class="color-picker" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
+        <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
+            color_lens
+        </span>
     </div>
+</div>
 
 @code {
 
