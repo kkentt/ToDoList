@@ -7,25 +7,25 @@
     #container {
         width: 100%;
         display: inline-block !important;
-/**/            margin:auto;
+        margin:auto;
     }
 
-        /*.biography-text {
-            color: #fff;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-shadow: 1px 1px 0 #333, -1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 2px 2px 5px rgba(0,0,0,0.65);
+        .pin {
+            align-self: center;
+            visibility: hidden;
+            cursor: pointer;
+            float:right;
         }
 
-*/
+        .item:hover .pin {
+            visibility: visible;
+        }
 
         .item {
             background: rgb(135, 199, 135);
-            width: 200px !important;
-            /*height:auto !important;*/
-            /**/
+            width: 250px !important;
         }
-
+      
     </style>
 
 <div @onclick="AddCard">
@@ -94,12 +94,11 @@
             if (string.IsNullOrEmpty(tempCard.Title))
             {
                 tempCard.Title = newTodo;
-                inputPlaceHolder = "Title";
+                inputPlaceHolder = "I will do this....";
             }
             else
             {
                 tempCard.Items.Add(new TodoItemModel() { Task = newTodo });
-                inputPlaceHolder = "I will do this....";
             }
             newTodo = null;
         }

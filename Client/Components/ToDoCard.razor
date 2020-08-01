@@ -1,38 +1,66 @@
 ﻿@page "/ToDoCard"
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
-<div class="item">
-    <h3 style="padding-left:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
-    <ul style="list-style: none; padding:10px;">
-        @foreach (var item in card.Items)
-        {
-            <li>
-                <div style="display:flex; width:100%;">
-                    <div>
-                        <input type="checkbox" @bind="item.IsDone"  />
+
+@*<style>
+    .pin {
+        align-self: center;
+        visibility: hidden;
+        cursor: pointer;
+    }
+
+    .item:hover .pin {
+        visibility: visible;
+    }
+
+    .item {
+        background: rgb(135, 199, 135);
+        width: 200px !important;
+        /*height:auto !important;*/
+        /**/
+    }
+
+</style>*@
+
+    <div class="item">
+        <div class="pin">
+            <span class="material-icons">
+                push_pin
+            </span>
+        </div>
+        <h3> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
+        <ul style="list-style: none; padding:10px;">
+            @foreach (var item in card.Items)
+            {
+                <li>
+                    <div style="display:flex; width:100%;">
+                        <div>
+                            <input type="checkbox" @bind="item.IsDone" />
+                        </div>
+                        @if (item.IsDone)
+                        {
+                            <div contenteditable="true" style="width:inherit;"><s>@item.Task</s></div>
+                        }
+                        else
+                        {
+                            <div contenteditable="true" style="width:inherit">@item.Task</div>
+                        }
                     </div>
-                    @if (item.IsDone)
-                    {
-                        <div contenteditable="true" style="width:inherit;"><del>@item.Task</del></div>
-                    }
-                    else
-                    {
-                        <div contenteditable="true"  style="width:inherit">@item.Task</div>
-                    }
-                </div>
+                </li>
+            }
+            <li>
+                <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
             </li>
-        }
-        <li>
-            <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
-        </li>
-    </ul>
-    <div>
-        <input type="color" class="color-picker" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
-        <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
-            color_lens
-        </span>
+        </ul>
+        <div>
+            <input type="color" class="color-picker" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
+            <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
+                color_lens
+            </span>
+        </div>
     </div>
-</div>
+
+
 
 @code {
 
@@ -71,7 +99,6 @@
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.openColorPicker", colorPickerId);
     }
 
-
     private void AddToDo(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
@@ -84,3 +111,4 @@
         }
     }
 }
+
