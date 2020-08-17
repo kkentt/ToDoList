@@ -2,33 +2,13 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
-@*<style>
-    .pin {
-        align-self: center;
-        visibility: hidden;
-        cursor: pointer;
-    }
-
-    .item:hover .pin {
-        visibility: visible;
-    }
-
-    .item {
-        background: rgb(135, 199, 135);
-        width: 200px !important;
-        /*height:auto !important;*/
-        /**/
-    }
-
-</style>*@
-
-    <div class="item">
+    <div class="item" style="border-radius:10px;">
         <div class="pin">
             <span class="material-icons">
                 push_pin
             </span>
         </div>
-        <h3> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
+        <h3 style="text-align:center;padding-top:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
         <ul style="list-style: none; padding:10px;">
             @foreach (var item in card.Items)
             {
@@ -39,11 +19,11 @@
                         </div>
                         @if (item.IsDone)
                         {
-                            <div contenteditable="true" style="width:inherit;"><s>@item.Task</s></div>
+                            <div contenteditable="true" style="width:inherit;padding-left:10px;"><s>@item.Task</s></div>
                         }
                         else
                         {
-                            <div contenteditable="true" style="width:inherit">@item.Task</div>
+                            <div contenteditable="true" style="width:inherit;padding-left:10px;">@item.Task</div>
                         }
                     </div>
                 </li>
@@ -57,10 +37,11 @@
             <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
                 color_lens
             </span>
+            <span class="material-icons"  style="cursor: pointer;" @onclick="DeleteCard">
+                delete
+            </span>
         </div>
     </div>
-
-
 
 @code {
 
@@ -109,6 +90,11 @@
                 newTodo = string.Empty;
             }
         }
+    }
+
+    public void DeleteCard()
+    {
+
     }
 }
 

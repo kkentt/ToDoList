@@ -3,30 +3,30 @@
 @using ToDoList.Client.Components
 @inject IJSRuntime JSRuntime
 
-    <style>
+<style>
     #container {
         width: 100%;
         display: inline-block !important;
-        margin:auto;
+        margin: auto;
+        padding:10px;
     }
 
-        .pin {
-            align-self: center;
-            visibility: hidden;
-            cursor: pointer;
-            float:right;
-        }
+    .pin {
+        align-self: center;
+        visibility: hidden;
+        cursor: pointer;
+        float: right;
+    }
 
-        .item:hover .pin {
-            visibility: visible;
-        }
+    .item:hover .pin {
+        visibility: visible;
+    }
 
-        .item {
-            background: rgb(135, 199, 135);
-            width: 250px !important;
-        }
-      
-    </style>
+    .item {
+        background: rgb(135, 199, 135);
+        width: 250px !important;
+    }
+</style>
 
 <div @onclick="AddCard">
     <div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
@@ -59,17 +59,26 @@
                         }
                     </ul>
                 </div>
-                    <input style="width:100%;" placeholder="@inputPlaceHolder" @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
+                <input style="width:100%;" placeholder="@inputPlaceHolder" @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
             </div>
         </div>
     </div>
 
     @*Card Component*@
     <div id="container">
-        @foreach (var card in cardLst)
+        @*@if (cardLst.Count > 0)
         {
-            <ToDoCard card="@card"/>
-        }
+            <div class="row main-pin" style="justify-content:center;padding:10px;">
+                <ToDoCard card="@cardLst[0]" />
+            </div>
+        }*@
+
+        <div id="items-wrapper">
+            @foreach (var card in cardLst)
+            {
+                <ToDoCard card="@card" />
+            }
+        </div>
     </div>
     @*End*@
 </div>
@@ -110,7 +119,7 @@
         {
             if (!string.IsNullOrWhiteSpace(tempCard.Title))
             {
-                cardLst.Add(new TodoCardModel() { Title = tempCard.Title,  CardNo= cardNo++  , Items = tempCard.Items ,  });
+                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items, });
                 // reset tempCard
                 tempCard.Title = string.Empty;
                 inputPlaceHolder = "Title";
@@ -123,7 +132,7 @@
     {
         if (!string.IsNullOrWhiteSpace(tempCard.Title))
         {
-            cardLst.Add(new TodoCardModel() { Title = tempCard.Title , CardNo = cardNo++, Items = tempCard.Items });
+            cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items });
             // reset tempCard
             tempCard.Title = string.Empty;
             inputPlaceHolder = "Title";
