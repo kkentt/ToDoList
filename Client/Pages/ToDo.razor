@@ -8,7 +8,7 @@
         width: 100%;
         display: inline-block !important;
         margin: auto;
-        padding:10px;
+        padding: 10px;
     }
 
     .pin {
@@ -66,19 +66,22 @@
 
     @*Card Component*@
     <div id="container">
-        @*@if (cardLst.Count > 0)
+        @if (pinnedCard != null && pinnedCard.IsPinned)
         {
             <div class="row main-pin" style="justify-content:center;padding:10px;">
-                <ToDoCard card="@cardLst[0]" />
+                <ToDoCard card="@pinnedCard" isPinnedComponent="true" />
             </div>
-        }*@
+        }
 
-        <div id="items-wrapper">
-            @foreach (var card in cardLst)
+    <div id="items-wrapper" class="wrapper">
+        @for (int i = 0; i < cardLst.Count; i++)
+        {
+            if (cardLst[i].IsPinned == false)
             {
-                <ToDoCard card="@card" />
+                <ToDoCard card="@cardLst[i]" cardIndex="@i" isPinnedComponent="false" OnDeleteClicked="RemoveCard" OnPushPinClicked="PushPin" />
             }
-        </div>
+        }
+    </div>
     </div>
     @*End*@
 </div>
@@ -90,11 +93,33 @@
     private string newTodo { get; set; }
     //end
 
+    private int pinnedIndex { get; set; }
+
+    private TodoCardModel pinnedCard { get; set; }
+
     private int cardNo { get; set; } = 0;
     private string inputPlaceHolder = "Title";
 
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
     private List<TodoItemModel> itemLst = new List<TodoItemModel>();
+
+
+    private void RemoveCard(int index)
+    {
+        Console.WriteLine("Hello from parent ." + index);
+        cardLst.RemoveAt(index);
+    }
+
+    private void PushPin(int index)
+    {
+        if(pinnedIndex != index)
+        {
+            cardLst[pinnedIndex].IsPinned = false; // give false to former pinned index
+            pinnedIndex = index;
+            pinnedCard = cardLst[index];
+        }
+        Console.WriteLine("PushPin : Hello from parent." + index);
+    }
 
     private void AddItem(KeyboardEventArgs e)
     {

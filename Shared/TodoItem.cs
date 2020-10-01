@@ -15,6 +15,8 @@ namespace ToDoList.Shared
     {
        public string Title { get; set; }
        public int CardNo { get; set; }
+        public string BackgroundColor { get; set; } = "#9dd2be";
+        public bool IsPinned { get; set; }
         public List<TodoItemModel> Items = new List<TodoItemModel>();
     }
 

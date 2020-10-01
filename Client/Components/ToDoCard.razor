@@ -2,48 +2,50 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
-    <div class="item" style="border-radius:10px;">
-        <div class="pin">
-            <span class="material-icons">
-                push_pin
-            </span>
-        </div>
-        <h3 style="text-align:center;padding-top:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
-        <ul style="list-style: none; padding:10px;">
-            @foreach (var item in card.Items)
-            {
-                <li>
-                    <div style="display:flex; width:100%;">
-                        <div>
-                            <input type="checkbox" @bind="item.IsDone" />
-                        </div>
-                        @if (item.IsDone)
-                        {
-                            <div contenteditable="true" style="width:inherit;padding-left:10px;"><s>@item.Task</s></div>
-                        }
-                        else
-                        {
-                            <div contenteditable="true" style="width:inherit;padding-left:10px;">@item.Task</div>
-                        }
-                    </div>
-                </li>
-            }
-            <li>
-                <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
-            </li>
-        </ul>
-        <div>
-            <input type="color" class="color-picker" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
-            <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
-                color_lens
-            </span>
-            <span class="material-icons"  style="cursor: pointer;" @onclick="DeleteCard">
-                delete
-            </span>
-        </div>
+<div class="item" style="border-radius:10px; background-color: @card.BackgroundColor; " >
+    <div class="pin">
+        <span class="material-icons" @onclick="() => PushPin(cardIndex)">
+            push_pin
+        </span>
     </div>
+    <h3 style="text-align:center;padding-top:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
+    <ul style="list-style: none; padding:10px;">
+        @foreach (var item in card.Items)
+        {
+            <li>
+                <div style="display:flex; width:100%;">
+                    <div>
+                        <input type="checkbox" @bind="item.IsDone" />
+                    </div>
+                    @if (item.IsDone)
+                    {
+                        <div contenteditable="true" style="width:inherit;padding-left:10px;"><s>@item.Task</s></div>
+                    }
+                    else
+                    {
+                        <div contenteditable="true" style="width:inherit;padding-left:10px;">@item.Task</div>
+                    }
+                </div>
+            </li>
+        }
+        <li>
+            <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
+        </li>
+    </ul>
+    <div>
+        <input type="color" class="color-picker" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
+        <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
+            color_lens
+        </span>
+        <span class="material-icons" style="cursor: pointer;" @onclick="() => DeleteCard(cardIndex)" data-card-index="@cardIndex">
+            delete
+        </span>
+    </div>
+</div>
 
 @code {
+
+    public bool isPinned { get; set; } = false;
 
     private string newTodo;
     private string cardColor;
@@ -51,11 +53,22 @@
     public List<TodoItemModel> itemLst = new List<TodoItemModel>();
 
     [Parameter]
+    public bool isPinnedComponent { get; set; }
+    [Parameter]
     public TodoCardModel card { get; set; }
 
+    [Parameter]
+    public int cardIndex { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnDeleteClicked { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnPushPinClicked { get; set; }
+
+    public static Action<string> OnBackgroundColorChanged { get; set; }
+
     private string colorPickerId { get { return "colorPicker" + card.CardNo; } }
-
-
 
     public List<TodoCardModel> cardLst = new List<TodoCardModel>();
 
@@ -63,21 +76,27 @@
     {
         base.OnAfterRender(firstRender);
         ActivateMagicGrid();
+        InitializeColorPickerEvent();
         //colorPickerId = "colorPicker" + cardNo;
     }
 
+    protected override void OnInitialized()
+    {
+        OnBackgroundColorChanged = UpdateBackgroundColor;
+    }
+
+    private void InitializeColorPickerEvent()
+    {
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent");
+
+    }
     private void ActivateMagicGrid()
     {
-        //JSRuntime.InvokeVoidAsync(
-        //      "UIJsLibraryFunctions.activateFreeWall",
-        //      "container");
-
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.activateMagicGrid");
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent");
     }
     private void OpenColorPicker(string colorPickerId)
     {
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.openColorPicker", colorPickerId);
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.openColorPicker", colorPickerId, DotNetObjectReference.Create(this));
     }
 
     private void AddToDo(KeyboardEventArgs e)
@@ -92,9 +111,30 @@
         }
     }
 
-    public void DeleteCard()
+    private void UpdateBackgroundColor(string color)
     {
+        card.BackgroundColor = color;
+        StateHasChanged();
+    }
 
+    private void DeleteCard(int cardIndex)
+    {
+        OnDeleteClicked.InvokeAsync(cardIndex);
+    }
+
+    private void PushPin(int cardIndex)
+    {
+        card.IsPinned = !card.IsPinned;
+        OnPushPinClicked.InvokeAsync(cardIndex);
+    }
+
+    [JSInvokable] 
+    public void SetBackgroundColor(string backgroundColor)
+    {
+        Console.WriteLine("Ohh man ! This is working well !");
+        //Console.WriteLine("Blazor calling from js: " + backgroundColor);
+        //OnBackgroundColorChanged.Invoke(backgroundColor);
+        card.BackgroundColor = backgroundColor;
     }
 }
 

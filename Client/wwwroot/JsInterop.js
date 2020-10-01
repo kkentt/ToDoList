@@ -1,5 +1,8 @@
-﻿window.UIJsLibraryFunctions =
+﻿var componentObject = null;
+
+window.UIJsLibraryFunctions =
 {
+    //This helps to order different height grids showing in good order
     activateMagicGrid: function () {
         let magicGrid = new MagicGrid({
             container: "#items-wrapper", // Required. Can be a class, id, or an HTMLElement.
@@ -8,19 +11,29 @@
         });
         magicGrid.listen();
     },
-    initializeColorPickerEvent:()=>
-    {
+
+    // Change backgroud color of the card
+    initializeColorPickerEvent: () => {
         colorWell = document.querySelectorAll(".color-picker");
-        colorWell.forEach( (colorInput) =>  {
-            var container = colorInput.closest('div.item'); 
-            colorInput.addEventListener("input",  (event) => {
-                container.style.background = event.target.value;
-                var result = getContrastYIQ(event.target.value);
+        colorWell.forEach((colorInput) => {
+            var card = colorInput.closest('div.item');
+
+            colorInput.addEventListener("input", (event) => {
+                card.style.background = event.target.value;
+                var textColor = getContrastYIQ(event.target.value);
                 //container.style.color = result;
-                container.style.setProperty("color", result , "important");
+                card.style.setProperty("color", textColor, "important");
+                //call Blazor function
+            }, false);
+
+            colorInput.addEventListener("change", (event) => {
+                console.log("Change event is called" + event.target.value);
+                //DotNet.invokeMethodAsync('ToDoList.Client', 'SetBackgroundColor', card.style.background, componentObject);
+                componentObject.invokeMethodAsync('SetBackgroundColor', card.style.background);
             }, false);
         });
 
+        //Get text color black or white based on background color
         function getContrastYIQ(hexcolor) {
             hexcolor = hexcolor.replace("#", "");
             var r = parseInt(hexcolor.substr(0, 2), 16);
@@ -30,7 +43,9 @@
             return (yiq >= 128) ? 'black' : 'white';
         }
     },
-    openColorPicker: function (colorPickerId) {
+
+    openColorPicker: function (colorPickerId, obj) {
+        componentObject = obj;
         var id = "#" + colorPickerId;
         $(id).click();
     },
