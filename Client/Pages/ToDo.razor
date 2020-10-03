@@ -45,7 +45,7 @@
                     }
                 </div>
                 <div class="card-body">
-                    <ul style="list-style: none;">
+                    <ul style="list-style: none;padding:0;">
                         @if (tempCard.Items != null)
                         {
                             @foreach (var item in tempCard.Items)
@@ -159,7 +159,7 @@
         }
     }
 
-    private  void AddCard(MouseEventArgs m)
+    private void AddCard(MouseEventArgs m)
     {
             if (!string.IsNullOrWhiteSpace(tempCard.Title))
             {

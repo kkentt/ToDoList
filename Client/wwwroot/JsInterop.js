@@ -13,11 +13,6 @@ window.UIJsLibraryFunctions =
         });
         magicGrid.listen();
     },
-
-    IsBrowserOnFocus: function () {
-        return document.hasFocus();
-    },
-
     // Change backgroud color of the card
     initializeColorPickerEvent: () => {
         colorWell = document.querySelectorAll(".color-picker");
