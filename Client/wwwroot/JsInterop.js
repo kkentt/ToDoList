@@ -8,8 +8,14 @@ window.UIJsLibraryFunctions =
             container: "#items-wrapper", // Required. Can be a class, id, or an HTMLElement.
             static: true, // Required for static content.
             animate: true, // Optional.
+            gutter: 25,
+            useTransform: true,
         });
         magicGrid.listen();
+    },
+
+    IsBrowserOnFocus: function () {
+        return document.hasFocus();
     },
 
     // Change backgroud color of the card

@@ -24,18 +24,24 @@
 
     .item {
         background: rgb(135, 199, 135);
-        width: 250px !important;
+        width: 270px !important;
+    }
+
+    @@media only screen and (max-width: 768px) {
+        .item {
+            width: 100% !important;
+        }
     }
 </style>
 
-<div @onclick="AddCard">
+<div id="main" @onclick="AddCard">
     <div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
         <div class="card">
             <div class="card-container">
                 <div class="card-header">
                     @if (!string.IsNullOrEmpty(tempCard.Title))
                     {
-                        <h3>@tempCard.Title</h3>
+                        <h3 contenteditable="true">@tempCard.Title</h3>
                     }
                 </div>
                 <div class="card-body">
@@ -73,15 +79,15 @@
             </div>
         }
 
-    <div id="items-wrapper" class="wrapper">
-        @for (int i = 0; i < cardLst.Count; i++)
-        {
-            if (cardLst[i].IsPinned == false)
+        <div id="items-wrapper" class="wrapper">
+            @for (int i = 0; i < cardLst.Count; i++)
             {
-                <ToDoCard card="@cardLst[i]" cardIndex="@i" isPinnedComponent="false" OnDeleteClicked="RemoveCard" OnPushPinClicked="PushPin" />
+                if (cardLst[i].IsPinned == false)
+                {
+                    <ToDoCard card="@cardLst[i]" cardIndex="@i" isPinnedComponent="false" OnDeleteClicked="RemoveCard" OnPushPinClicked="PushPin" />
+                }
             }
-        }
-    </div>
+        </div>
     </div>
     @*End*@
 </div>
@@ -112,7 +118,7 @@
 
     private void PushPin(int index)
     {
-        if(pinnedIndex != index)
+        if (pinnedIndex != index)
         {
             cardLst[pinnedIndex].IsPinned = false; // give false to former pinned index
             pinnedIndex = index;
@@ -153,16 +159,17 @@
         }
     }
 
-    private void AddCard(MouseEventArgs m)
+    private  void AddCard(MouseEventArgs m)
     {
-        if (!string.IsNullOrWhiteSpace(tempCard.Title))
-        {
-            cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items });
-            // reset tempCard
-            tempCard.Title = string.Empty;
-            inputPlaceHolder = "Title";
-            tempCard.Items = new List<TodoItemModel>();
-        }
+            if (!string.IsNullOrWhiteSpace(tempCard.Title))
+            {
+                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items });
+                Console.WriteLine("Added to list");
+                // reset tempCard
+                tempCard.Title = string.Empty;
+                inputPlaceHolder = "Title";
+                tempCard.Items = new List<TodoItemModel>();
+            }
     }
 }
 

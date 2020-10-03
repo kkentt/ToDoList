@@ -8,7 +8,7 @@
             push_pin
         </span>
     </div>
-    <h3 style="text-align:center;padding-top:10px;"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
+    <h3 style="text-align:center;padding-top:10px;" contenteditable="true"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
     <ul style="list-style: none; padding:10px;">
         @foreach (var item in card.Items)
         {
