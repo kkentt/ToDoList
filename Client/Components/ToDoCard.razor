@@ -2,7 +2,7 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
-<div class="item" style="border-radius:10px; background-color: @card.BackgroundColor; " >
+<div class="item" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor; " >
     <div class="pin">
         <span class="material-icons" @onclick="() => PushPin(cardIndex)">
             push_pin
@@ -33,7 +33,7 @@
         </li>
     </ul>
     <div>
-        <input type="color" class="color-picker" id="@colorPickerId" @bind="cardColor" style="width: 0;height: 0; visibility:hidden" />
+        <input type="color" class="color-picker" id="@colorPickerId" @bind="card.TextColor" style="width: 0;height: 0; visibility:hidden" />
         <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
             color_lens
         </span>
@@ -48,7 +48,6 @@
     public bool isPinned { get; set; } = false;
 
     private string newTodo;
-    private string cardColor;
     public string Title { get; set; }
     public List<TodoItemModel> itemLst = new List<TodoItemModel>();
 
