@@ -2,7 +2,8 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
-<div class="item"  @ref ="cardRef"  style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor; " >
+
+<div class="item" @ref="cardRef" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor; ">
     <div class="pin">
         <span class="material-icons" @onclick="() => PushPin(cardIndex)">
             push_pin
@@ -15,22 +16,30 @@
             <li>
                 <div style="display:flex; width:100%;">
                     <div>
-                        <input type="checkbox" @bind="item.IsDone" />
+                        <style>
+                            .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true]) ~ .mdc-checkbox__background
+                            {
+                                background-color:white !important;
+                            }
+                        </style>
+                        <MatCheckbox @bind-Value="item.IsDone"></MatCheckbox>
                     </div>
                     @if (item.IsDone)
                     {
-                        <div contenteditable="true" style="width:inherit;padding-left:10px;"><s>@item.Task</s></div>
+                        <div contenteditable="true" style="display:flex;flex-direction:column; justify-content:center; width:inherit;padding-left:10px;"><s>@item.Task</s></div>
                     }
                     else
                     {
-                        <div contenteditable="true" style="width:inherit;padding-left:10px;">@item.Task</div>
+                        <div contenteditable="true" style="display: flex; flex-direction: column; justify-content:center; width: inherit; padding-left: 10px;">@item.Task</div>
                     }
                 </div>
             </li>
         }
-        <li>
-            <input style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />
-        </li>
+    <li>
+        <MatTextField  FullWidth="true"  PlaceHolder=" Let's do this"  @bind-Value="@newTodo"  @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true"></MatTextField>
+
+        @*<input type="text" style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />*@
+    </li>
     </ul>
     <div>
         <input type="color" class="color-picker" id="@colorPickerId" @bind="card.TextColor" style="width: 0;height: 0; visibility:hidden" />
@@ -42,6 +51,8 @@
         </span>
     </div>
 </div>
+
+
 
 @code {
 
@@ -65,8 +76,6 @@
     [Parameter]
     public EventCallback<int> OnPushPinClicked { get; set; }
 
-    //public static Action<string> OnBackgroundColorChanged { get; set; }
-
     private string colorPickerId { get { return "colorPicker" + card.CardNo; } }
 
     public List<TodoCardModel> cardLst = new List<TodoCardModel>();
@@ -88,7 +97,7 @@
     private void InitializeColorPickerEvent(ElementReference cardRef)
     {
 
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent" , cardRef);
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent", cardRef);
 
     }
     private void ActivateMagicGrid()
@@ -124,7 +133,7 @@
     }
 
     [JSInvokable]
-    public void SetBackgroundColor(string backgroundColor , string textColor )
+    public void SetBackgroundColor(string backgroundColor, string textColor)
     {
         Console.Write(backgroundColor);
         card.BackgroundColor = backgroundColor;
