@@ -2,7 +2,7 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
-<div class="item" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor; " >
+<div class="item"  @ref ="cardRef"  style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor; " >
     <div class="pin">
         <span class="material-icons" @onclick="() => PushPin(cardIndex)">
             push_pin
@@ -46,7 +46,7 @@
 @code {
 
     public bool isPinned { get; set; } = false;
-
+    ElementReference cardRef;
     private string newTodo;
     public string Title { get; set; }
     public List<TodoItemModel> itemLst = new List<TodoItemModel>();
@@ -65,7 +65,7 @@
     [Parameter]
     public EventCallback<int> OnPushPinClicked { get; set; }
 
-    public static Action<string> OnBackgroundColorChanged { get; set; }
+    //public static Action<string> OnBackgroundColorChanged { get; set; }
 
     private string colorPickerId { get { return "colorPicker" + card.CardNo; } }
 
@@ -73,17 +73,22 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
+        base.OnAfterRender(firstRender);
         if (firstRender)
         {
-            InitializeColorPickerEvent();
+            InitializeColorPickerEvent(cardRef);
         }
         ActivateMagicGrid();
-        //colorPickerId = "colorPicker" + cardNo;
     }
 
-    private void InitializeColorPickerEvent()
+    protected override void OnInitialized()
     {
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent");
+    }
+
+    private void InitializeColorPickerEvent(ElementReference cardRef)
+    {
+
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent" , cardRef);
 
     }
     private void ActivateMagicGrid()
@@ -119,8 +124,9 @@
     }
 
     [JSInvokable]
-    public void SetBackgroundColor(string backgroundColor , string textColor)
+    public void SetBackgroundColor(string backgroundColor , string textColor )
     {
+        Console.Write(backgroundColor);
         card.BackgroundColor = backgroundColor;
         card.TextColor = textColor;
 

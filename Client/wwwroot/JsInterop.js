@@ -14,26 +14,22 @@ window.UIJsLibraryFunctions =
         magicGrid.listen();
     },
     // Change backgroud color of the card
-    initializeColorPickerEvent: () => {
+    initializeColorPickerEvent: function (card) {
+        console.log(card);
         var textColor = "";
-        colorWell = document.querySelectorAll(".color-picker");
-        colorWell.forEach((colorInput) => {
-            var card = colorInput.closest('div.item');
-            
+        var colorInput = card.querySelector(".color-picker");
+        console.log(colorInput);
             colorInput.addEventListener("input", (event) => {
                 card.style.background = event.target.value;
                 textColor = getContrastYIQ(event.target.value);
-                //container.style.color = result;
                 card.style.setProperty("color", textColor, "important");
                 //call Blazor function
             }, false);
 
             colorInput.addEventListener("change", (event) => {
                 console.log("Change event is called" + event.target.value);
-                //DotNet.invokeMethodAsync('ToDoList.Client', 'SetBackgroundColor', card.style.background, componentObject);
                 componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value, textColor);
             }, false);
-        });
 
         //Get text color black or white based on background color
         function getContrastYIQ(hexcolor) {
