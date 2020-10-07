@@ -30,7 +30,7 @@ window.UIJsLibraryFunctions =
             colorInput.addEventListener("change", (event) => {
                 console.log("Change event is called" + event.target.value);
                 //DotNet.invokeMethodAsync('ToDoList.Client', 'SetBackgroundColor', card.style.background, componentObject);
-                componentObject.invokeMethodAsync('SetBackgroundColor', card.style.background);
+                componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value);
             }, false);
         });
 
