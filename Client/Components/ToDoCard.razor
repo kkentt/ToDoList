@@ -74,8 +74,11 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
+        if (firstRender)
+        {
+            InitializeColorPickerEvent();
+        }
         ActivateMagicGrid();
-        InitializeColorPickerEvent();
         //colorPickerId = "colorPicker" + cardNo;
     }
 
@@ -127,7 +130,7 @@
         OnPushPinClicked.InvokeAsync(cardIndex);
     }
 
-    [JSInvokable] 
+    [JSInvokable]
     public void SetBackgroundColor(string backgroundColor)
     {
         Console.WriteLine("Ohh man ! This is working well !");
