@@ -119,9 +119,11 @@
     }
 
     [JSInvokable]
-    public void SetBackgroundColor(string backgroundColor)
+    public void SetBackgroundColor(string backgroundColor , string textColor)
     {
         card.BackgroundColor = backgroundColor;
+        card.TextColor = textColor;
+
         StateHasChanged();
     }
 }

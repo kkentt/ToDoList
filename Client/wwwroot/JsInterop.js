@@ -15,13 +15,14 @@ window.UIJsLibraryFunctions =
     },
     // Change backgroud color of the card
     initializeColorPickerEvent: () => {
+        var textColor = "";
         colorWell = document.querySelectorAll(".color-picker");
         colorWell.forEach((colorInput) => {
             var card = colorInput.closest('div.item');
-
+            
             colorInput.addEventListener("input", (event) => {
                 card.style.background = event.target.value;
-                var textColor = getContrastYIQ(event.target.value);
+                textColor = getContrastYIQ(event.target.value);
                 //container.style.color = result;
                 card.style.setProperty("color", textColor, "important");
                 //call Blazor function
@@ -30,7 +31,7 @@ window.UIJsLibraryFunctions =
             colorInput.addEventListener("change", (event) => {
                 console.log("Change event is called" + event.target.value);
                 //DotNet.invokeMethodAsync('ToDoList.Client', 'SetBackgroundColor', card.style.background, componentObject);
-                componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value);
+                componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value, textColor);
             }, false);
         });
 
