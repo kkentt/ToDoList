@@ -82,11 +82,6 @@
         //colorPickerId = "colorPicker" + cardNo;
     }
 
-    protected override void OnInitialized()
-    {
-        OnBackgroundColorChanged = UpdateBackgroundColor;
-    }
-
     private void InitializeColorPickerEvent()
     {
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent");
@@ -111,12 +106,6 @@
                 newTodo = string.Empty;
             }
         }
-    }
-
-    private void UpdateBackgroundColor(string color)
-    {
-        card.BackgroundColor = color;
-        StateHasChanged();
     }
 
     private void DeleteCard(int cardIndex)
