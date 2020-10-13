@@ -4,34 +4,34 @@
 @inject IJSRuntime JSRuntime
 
 <style>
-    #container {
-        width: 100%;
-        display: inline-block !important;
-        margin: auto;
-        padding: 10px;
-    }
-
-    .pin {
-        align-self: center;
-        visibility: hidden;
-        cursor: pointer;
-        float: right;
-    }
-
-    .item:hover .pin {
-        visibility: visible;
-    }
-
-    .item {
-/*        background: rgb(135, 199, 135);
-*/        width: 270px !important;
-    }
-
-    @@media only screen and (max-width: 768px) {
-        .item {
-            width: 100% !important;
+        #container {
+            width: 100%;
+            display: inline-block !important;
+            margin: auto;
+            padding: 10px;
         }
-    }
+
+        .pin {
+            align-self: center;
+            visibility: hidden;
+            cursor: pointer;
+            float: right;
+        }
+
+        .item:hover .pin {
+            visibility: visible;
+        }
+
+        .item {
+            width: 270px !important;
+/*            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+*/        }
+
+        @@media only screen and (max-width: 768px) {
+            .item {
+                width: 100% !important;
+            }
+        }
 </style>
 
 <div id="main" @onclick="AddCard">
@@ -99,7 +99,7 @@
     private string newTodo { get; set; }
     //end
 
-    private int pinnedIndex { get; set; }
+    private int pinnedIndex { get; set; } = -1;
 
     private TodoCardModel pinnedCard { get; set; }
 
@@ -120,7 +120,10 @@
     {
         if (pinnedIndex != index)
         {
-            cardLst[pinnedIndex].IsPinned = false; // give false to former pinned index
+            if (pinnedIndex >= 0) //
+            {
+                cardLst[pinnedIndex].IsPinned = false; // give false to former pinned index
+            }
             pinnedIndex = index;
             pinnedCard = cardLst[index];
         }
@@ -161,15 +164,15 @@
 
     private void AddCard(MouseEventArgs m)
     {
-            if (!string.IsNullOrWhiteSpace(tempCard.Title))
-            {
-                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items });
-                Console.WriteLine("Added to list");
-                // reset tempCard
-                tempCard.Title = string.Empty;
-                inputPlaceHolder = "Title";
-                tempCard.Items = new List<TodoItemModel>();
-            }
+        if (!string.IsNullOrWhiteSpace(tempCard.Title))
+        {
+            cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items });
+            Console.WriteLine("Added to list");
+            // reset tempCard
+            tempCard.Title = string.Empty;
+            inputPlaceHolder = "Title";
+            tempCard.Items = new List<TodoItemModel>();
+        }
     }
 }
 

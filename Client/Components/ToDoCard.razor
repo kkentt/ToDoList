@@ -2,45 +2,50 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
+    
 
-<div class="item" @ref="cardRef" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor; ">
+<div class="item" @ref="cardRef" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor;">
     <div class="pin">
         <span class="material-icons" @onclick="() => PushPin(cardIndex)">
             push_pin
         </span>
     </div>
-    <h3 style="text-align:center;padding-top:10px;" contenteditable="true"> @card.Title          @*@card.Card.Count(x => x.IsDone)*@</h3>
-    <ul style="list-style: none; padding:10px;">
-        @foreach (var item in card.Items)
+    <textarea class="item-txt-area" type="text" @ref="cardTitleTextAreaRef" @bind="card.Title" @oninput="AutoResizeTextAreaHeight"  @onkeydown='(e => Blur(e , cardRef) )'         
+              rows="1" style="resize:none; font-size:25px; font-weight:500; display:flex; overflow:hidden; min-height:10px; flex-direction:column; justify-content:center;text-align:center; border:none; background-color: @card.BackgroundColor ; color:@card.TextColor;width:100%;" />
+    <ul style="list-style: none; padding:10px; padding-top:0;">
+        @foreach(var item in card.Items)
         {
-            <li>
+            <li style="padding-top:1px;">
                 <div style="display:flex; width:100%;">
                     <div>
                         <style>
-                            .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true]) ~ .mdc-checkbox__background
-                            {
-                                background-color:white !important;
+                            .mdc-checkbox__native-control:enabled:not(:checked):not(:indeterminate):not([data-indeterminate=true]) ~ .mdc-checkbox__background {
+                                background-color: white !important;
                             }
                         </style>
                         <MatCheckbox @bind-Value="item.IsDone"></MatCheckbox>
                     </div>
                     @if (item.IsDone)
                     {
-                        <div contenteditable="true" style="display:flex;flex-direction:column; justify-content:center; width:inherit;padding-left:10px;"><s>@item.Task</s></div>
+                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
+                          style="text-decoration:line-through; display:flex;flex-direction:column; justify-content:center; width:inherit;resize:none; padding-left:10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor; width:100%;" />
                     }
                     else
                     {
-                        <div contenteditable="true" style="display: flex; flex-direction: column; justify-content:center; width: inherit; padding-left: 10px;">@item.Task</div>
+                        //this works  binding
+                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
+                          style="display: flex; flex-direction: column; justify-content:center; width: inherit; resize:none; padding-left: 10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor;width:100%;" />
                     }
                 </div>
             </li>
         }
-    <li>
-        <MatTextField  FullWidth="true"  PlaceHolder=" Let's do this"  @bind-Value="@newTodo"  @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true"></MatTextField>
 
-        @*<input type="text" style="width:100%;" placeholder="Something todo" @bind="newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true" />*@
+        @{ var textColor = "color:" +  card.TextColor + ";"; }
+    <li>
+        <MatTextField InputStyle="@textColor" FullWidth="true" PlaceHolder=" Let's do this" @bind-Value="@newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true"></MatTextField>
     </li>
     </ul>
+    
     <div>
         <input type="color" class="color-picker" id="@colorPickerId" @bind="card.TextColor" style="width: 0;height: 0; visibility:hidden" />
         <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
@@ -56,8 +61,10 @@
 
 @code {
 
-    public bool isPinned { get; set; } = false;
     ElementReference cardRef;
+    ElementReference cardTitleTextAreaRef;
+
+    public bool isPinned { get; set; } = false;
     private string newTodo;
     public string Title { get; set; }
     public List<TodoItemModel> itemLst = new List<TodoItemModel>();
@@ -88,18 +95,24 @@
             InitializeColorPickerEvent(cardRef);
         }
         ActivateMagicGrid();
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.AutoResizeTextArea", cardRef);
     }
 
     protected override void OnInitialized()
     {
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent", cardRef);
+    }
+
+    private void AutoResizeTextAreaHeight()
+    {
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.AutoResizeTextAreaHeight", cardTitleTextAreaRef);
     }
 
     private void InitializeColorPickerEvent(ElementReference cardRef)
     {
-
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent", cardRef);
-
     }
+
     private void ActivateMagicGrid()
     {
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.activateMagicGrid");
@@ -107,6 +120,14 @@
     private void OpenColorPicker(string colorPickerId)
     {
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.openColorPicker", colorPickerId, DotNetObjectReference.Create(this));
+    }
+
+    private void Blur(KeyboardEventArgs e , ElementReference cardRef)
+    {
+        if(e.Key == "Enter")
+        {
+            JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.blur" , cardRef);
+        }
     }
 
     private void AddToDo(KeyboardEventArgs e)
@@ -135,10 +156,9 @@
     [JSInvokable]
     public void SetBackgroundColor(string backgroundColor, string textColor)
     {
-        Console.Write(backgroundColor);
         card.BackgroundColor = backgroundColor;
         card.TextColor = textColor;
-
+        
         StateHasChanged();
     }
 }

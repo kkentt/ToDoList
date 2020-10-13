@@ -15,21 +15,24 @@ window.UIJsLibraryFunctions =
     },
     // Change backgroud color of the card
     initializeColorPickerEvent: function (card) {
-        console.log(card);
         var textColor = "";
         var colorInput = card.querySelector(".color-picker");
-        console.log(colorInput);
-            colorInput.addEventListener("input", (event) => {
-                card.style.background = event.target.value;
-                textColor = getContrastYIQ(event.target.value);
-                card.style.setProperty("color", textColor, "important");
-                //call Blazor function
-            }, false);
+        colorInput.addEventListener("input", (event) => {
+            card.style.background = event.target.value;
+            textColor = getContrastYIQ(event.target.value);
+            card.style.setProperty("color", textColor, "important");
 
-            colorInput.addEventListener("change", (event) => {
-                console.log("Change event is called" + event.target.value);
-                componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value, textColor);
-            }, false);
+            //call Blazor function
+            var textAreas = card.querySelectorAll(".item-txt-area");
+            for (i = 0; i < textAreas.length; i++) {
+                textAreas[i].style.background = event.target.value;
+                textAreas[i].style.setProperty("color", textColor, "important");
+            }
+        }, false);
+
+        colorInput.addEventListener("change", (event) => {
+            componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value, textColor);
+        }, false);
 
         //Get text color black or white based on background color
         function getContrastYIQ(hexcolor) {
@@ -42,9 +45,25 @@ window.UIJsLibraryFunctions =
         }
     },
 
+    AutoResizeTextArea: function (card) {
+        var items = card.querySelectorAll(".item-txt-area")
+        if (items.length > 0) {
+            for (i = 0; i < items.length; i++) {
+                items[i].style.height = "0px";
+                items[i].style.height = (10 + items[i].scrollHeight) + "px";
+            }
+        }
+    },
     openColorPicker: function (colorPickerId, obj) {
         componentObject = obj;
         var id = "#" + colorPickerId;
         $(id).click();
+    },
+
+    blur: function (card) {
+        var textAreas = card.querySelectorAll(".item-txt-area")
+        for (i = 0; i < textAreas.length; i++) {
+            textAreas[i].blur();
+        }
     },
 }
