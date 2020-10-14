@@ -2,8 +2,6 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
-    
-
 <div class="item" @ref="cardRef" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor;">
     <div class="pin">
         <span class="material-icons" @onclick="() => PushPin(cardIndex)">
@@ -40,9 +38,16 @@
             </li>
         }
 
-        @{ var textColor = "color:" +  card.TextColor + ";"; }
     <li>
-        <MatTextField InputStyle="@textColor" FullWidth="true" PlaceHolder=" Let's do this" @bind-Value="@newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true"></MatTextField>
+        @{ var textColor = "color:" + card.TextColor + ";"; }
+        <MatTextField Ref="itemAddInputRef" class="test" InputStyle="@textColor" FullWidth="true" PlaceHolder=" Let's do this" @bind-Value="@newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true">
+            <style>
+                @itemAddInputRef input::placeholder { /* Most modern browsers support this now. */
+                    color: @card.TextColor !important;
+                    opacity: 0.5 !important;
+                }
+            </style>
+        </MatTextField>
     </li>
     </ul>
     
@@ -63,6 +68,7 @@
 
     ElementReference cardRef;
     ElementReference cardTitleTextAreaRef;
+    ElementReference itemAddInputRef;
 
     public bool isPinned { get; set; } = false;
     private string newTodo;
