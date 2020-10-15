@@ -9,7 +9,8 @@ window.UIJsLibraryFunctions =
             static: true, // Required for static content.
             animate: true, // Optional.
             gutter: 25,
-            //useTransform: true,
+            useMin: true,
+            useTransform: true,
         });
         magicGrid.listen();
     },
