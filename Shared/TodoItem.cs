@@ -10,7 +10,6 @@ namespace ToDoList.Shared
         public string Task { get; set; }
         public bool IsDone { get; set; }
     }
-
     public class TodoCardModel
     {
        public string Title { get; set; }

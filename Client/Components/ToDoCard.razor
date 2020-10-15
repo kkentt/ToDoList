@@ -13,7 +13,7 @@
     <ul style="list-style: none; padding:10px; padding-top:0;">
         @foreach(var item in card.Items)
         {
-            <li style="padding-top:1px;">
+            <li style="padding-top:1.5px;">
                 <div style="display:flex; width:100%;">
                     <div>
                         <style>
@@ -25,13 +25,13 @@
                     </div>
                     @if (item.IsDone)
                     {
-                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
+                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString(); AutoResizeTextAreaHeight(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
                           style="text-decoration:line-through; display:flex;flex-direction:column; justify-content:center; width:inherit;resize:none; padding-left:10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor; width:100%;" />
                     }
                     else
                     {
                         //this works  binding
-                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
+                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString();  AutoResizeTextAreaHeight(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
                           style="display: flex; flex-direction: column; justify-content:center; width: inherit; resize:none; padding-left: 10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor;width:100%;" />
                     }
                 </div>
@@ -39,10 +39,12 @@
         }
 
     <li>
-        @{ var textColor = "color:" + card.TextColor + ";"; }
-        <MatTextField Ref="itemAddInputRef" class="test" InputStyle="@textColor" FullWidth="true" PlaceHolder=" Let's do this" @bind-Value="@newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true">
+        @{ var textColor = "color:" + card.TextColor + ";";
+            var inputClass = "input_" + card.CardNo;
+            }
+        <MatTextField Ref="@itemAddInputRef" Id="tid"  class="@inputClass" FullWidth="true" PlaceHolder=" Let's do this" @bind-Value="@newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true">
             <style>
-                @itemAddInputRef input::placeholder { /* Most modern browsers support this now. */
+                .@inputClass input::placeholder { /* Most modern browsers support this now. */
                     color: @card.TextColor !important;
                     opacity: 0.5 !important;
                 }
@@ -96,12 +98,12 @@
     protected override void OnAfterRender(bool firstRender)
     {
         base.OnAfterRender(firstRender);
+        ActivateMagicGrid();
         if (firstRender)
         {
+            AutoResizeTextAreaHeight();
             InitializeColorPickerEvent(cardRef);
         }
-        ActivateMagicGrid();
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.AutoResizeTextArea", cardRef);
     }
 
     protected override void OnInitialized()
@@ -111,7 +113,7 @@
 
     private void AutoResizeTextAreaHeight()
     {
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.AutoResizeTextAreaHeight", cardTitleTextAreaRef);
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.AutoResizeTextArea", cardRef);
     }
 
     private void InitializeColorPickerEvent(ElementReference cardRef)
@@ -164,7 +166,7 @@
     {
         card.BackgroundColor = backgroundColor;
         card.TextColor = textColor;
-        
+
         StateHasChanged();
     }
 }

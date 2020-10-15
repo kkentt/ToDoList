@@ -9,7 +9,7 @@ window.UIJsLibraryFunctions =
             static: true, // Required for static content.
             animate: true, // Optional.
             gutter: 25,
-            useTransform: true,
+            //useTransform: true,
         });
         magicGrid.listen();
     },
@@ -50,7 +50,7 @@ window.UIJsLibraryFunctions =
         if (items.length > 0) {
             for (i = 0; i < items.length; i++) {
                 items[i].style.height = "0px";
-                items[i].style.height = (10 + items[i].scrollHeight) + "px";
+                items[i].style.height = (items[i].scrollHeight) + "px";
             }
         }
     },
