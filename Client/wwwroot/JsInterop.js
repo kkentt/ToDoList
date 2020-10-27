@@ -50,7 +50,7 @@ window.UIJsLibraryFunctions =
         var items = card.querySelectorAll(".item-txt-area")
         if (items.length > 0) {
             for (i = 0; i < items.length; i++) {
-                items[i].style.height = "0px";
+                items[i].style.height = "auto";
                 items[i].style.height = (items[i].scrollHeight) + "px";
             }
         }

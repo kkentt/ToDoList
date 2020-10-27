@@ -4,35 +4,45 @@
 @inject IJSRuntime JSRuntime
 
 <style>
-        #container {
-            width: 100%;
-            display: inline-block !important;
-            margin: auto;
-            padding: 10px;
-        }
+    #container {
+        width: 100%;
+        display: inline-block !important;
+        margin: auto;
+        padding: 10px;
+    }
 
-        .pin {
-            align-self: center;
-            visibility: hidden;
-            cursor: pointer;
-            float: right;
-        }
+    .pin {
+        align-self: center;
+        visibility: hidden;
+        cursor: pointer;
+        position: absolute;
+        top: 1px;
+        right: 1px;
+    }
 
-        .item:hover .pin {
-            visibility: visible;
-        }
+    .item:hover .pin {
+        visibility: visible;
+    }
+
+/*    .card-title:focus + div .pin {
+        background-color:red;
+        color:pink;
+    }*/
+
+    .card-title:focus ~ .pin {
+        visibility: hidden;
+    }
 
     .item {
         width: 270px !important;
-        /*        box-shadow: 0 0 5px -3px black;
-    */ box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3)
+        box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3)
     }
 
-        @@media only screen and (max-width: 768px) {
-            .item {
-                width: 100% !important;
-            }
+    @@media only screen and (max-width: 768px) {
+        .item {
+            width: 100% !important;
         }
+    }
 </style>
 
 <div id="main" @onclick="AddCard">
@@ -76,7 +86,7 @@
         @if (pinnedCard != null && pinnedCard.IsPinned)
         {
             <div class="row main-pin" style="justify-content:center;padding:10px;">
-                <ToDoCard card="@pinnedCard" isPinnedComponent="true" />
+                <ToDoCard card="@pinnedCard" OnDeleteClicked="RemoveCard" isPinnedComponent="true" />
             </div>
         }
 
@@ -113,13 +123,16 @@
 
     private void RemoveCard(int index)
     {
-        Console.WriteLine("Hello from parent ." + index);
         cardLst.RemoveAt(index);
+        if (index == pinnedIndex)
+        {
+            ResetPinnedIndex();
+        }
     }
 
     private void PushPin(int index)
     {
-        if (pinnedIndex != index)
+        if (IsAlreadyPinned(index) == false)
         {
             if (pinnedIndex >= 0) //
             {
@@ -128,7 +141,17 @@
             pinnedIndex = index;
             pinnedCard = cardLst[index];
         }
-        Console.WriteLine("PushPin : Hello from parent." + index);
+    }
+
+    private void ResetPinnedIndex()
+    {
+        pinnedIndex = -1;
+    }
+
+    private bool IsAlreadyPinned(int indexToBePinned)
+    {
+        var result = (pinnedIndex == indexToBePinned) ? true : false;
+        return result;
     }
 
     private void AddItem(KeyboardEventArgs e)

@@ -3,16 +3,17 @@
 @inject IJSRuntime JSRuntime
 
 <div class="item" @ref="cardRef" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor;">
-    <div class="pin">
-        <span class="material-icons" @onclick="() => PushPin(cardIndex)">
-            push_pin
+    <div style="position:relative;padding-top:5px; padding-left:1px;padding-right:1px;">
+        <textarea class="item-txt-area card-title" type="text" @ref="cardTitleTextAreaRef" @bind="card.Title" @onkeydown='(e => Blur(e , cardRef) )'
+                  rows="1" style="padding:25px 30px 10px; resize:none; font-size:23px; font-weight:500; display:flex; overflow:hidden; min-height:10px; flex-direction:column; justify-content:center;text-align:center; border:none; background-color: @card.BackgroundColor ; color:@card.TextColor;width:100%;" />
+        <span class="pin">
+            <MatIconButton Icon="push_pin" @onclick="() => PushPin(cardIndex)" />
         </span>
     </div>
-    <textarea class="item-txt-area" type="text" @ref="cardTitleTextAreaRef" @bind="card.Title" @oninput="AutoResizeTextAreaHeight"  @onkeydown='(e => Blur(e , cardRef) )'         
-              rows="1" style="resize:none; font-size:25px; font-weight:500; display:flex; overflow:hidden; min-height:10px; flex-direction:column; justify-content:center;text-align:center; border:none; background-color: @card.BackgroundColor ; color:@card.TextColor;width:100%;" />
-    <ul style="list-style: none; padding:10px; padding-top:0;">
-        @foreach(var item in card.Items)
-        {
+
+    <ul style="list-style: none; padding:10px; padding-top:0;padding-bottom:0;">
+        @foreach (var item in card.Items)
+        {   
             <li style="padding-top:1.5px;">
                 <div style="display:flex; width:100%;">
                     <div>
@@ -25,46 +26,40 @@
                     </div>
                     @if (item.IsDone)
                     {
-                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString(); AutoResizeTextAreaHeight(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
-                          style="text-decoration:line-through; display:flex;flex-direction:column; justify-content:center; width:inherit;resize:none; padding-left:10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor; width:100%;" />
+                        <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {   item.Task = e.Value.ToString();  })' @onkeydown='(e => Blur(e , cardRef))' rows="1"
+                                  style="text-decoration:line-through; display:flex;flex-direction:column; justify-content:center; width:inherit;resize:none; padding-left:10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor; width:100%;" />
                     }
                     else
                     {
-                        //this works  binding
-                <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {item.Task = e.Value.ToString();  AutoResizeTextAreaHeight(); })' @onkeydown='(e => Blur(e , cardRef))'  rows="1"
-                          style="display: flex; flex-direction: column; justify-content:center; width: inherit; resize:none; padding-left: 10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor;width:100%;" />
+                        <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {  item.Task = e.Value.ToString();  })' @onkeydown='(e => Blur(e , cardRef))' rows="1"
+                                  style="display: flex; flex-direction: column; justify-content:center; width: inherit; resize:none; padding-left: 10px; padding-top:8px; overflow:hidden; min-height:10px;border:none; background-color: @card.BackgroundColor; color:@card.TextColor;width:100%;" />
                     }
                 </div>
             </li>
         }
 
-    <li>
-        @{ var textColor = "color:" + card.TextColor + ";";
-            var inputClass = "input_" + card.CardNo;
+        <li>
+            @{ var textColor = "color:" + card.TextColor + ";";
+                var inputClass = "input_" + card.CardNo;
             }
-        <MatTextField Ref="@itemAddInputRef" Id="tid"  class="@inputClass" FullWidth="true" PlaceHolder=" Let's do this" @bind-Value="@newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true">
-            <style>
+            <MatTextField Ref="@itemAddInputRef" class="@inputClass" @bind-Value="@newTodo" @onkeyup="(e => AddToDo(e))" @onclick:stopPropagation="true"
+                          FullWidth="true" PlaceHolder=" Let's do this" InputStyle="@textColor">
+                <style>
                 .@inputClass input::placeholder { /* Most modern browsers support this now. */
                     color: @card.TextColor !important;
                     opacity: 0.5 !important;
                 }
-            </style>
-        </MatTextField>
-    </li>
+                </style>
+            </MatTextField>
+        </li>
     </ul>
-    
+
     <div>
         <input type="color" class="color-picker" id="@colorPickerId" @bind="card.TextColor" style="width: 0;height: 0; visibility:hidden" />
-        <span class="material-icons" @onclick="() => OpenColorPicker(colorPickerId)" style="cursor: pointer;">
-            color_lens
-        </span>
-        <span class="material-icons" style="cursor: pointer;" @onclick="() => DeleteCard(cardIndex)" data-card-index="@cardIndex">
-            delete
-        </span>
+        <MatIconButton Icon="color_lens" OnClick="() => OpenColorPicker(colorPickerId)" />
+        <MatIconButton Icon="delete" @onclick="() => DeleteCard(cardIndex)" />
     </div>
 </div>
-
-
 
 @code {
 
@@ -97,18 +92,18 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
-        ActivateMagicGrid();
         if (firstRender)
         {
-            AutoResizeTextAreaHeight();
             InitializeColorPickerEvent(cardRef);
         }
+        ActivateMagicGrid();//magic grid must be after autoresize
+        AutoResizeTextAreaHeight();
+        Console.WriteLine("render");
     }
 
     protected override void OnInitialized()
     {
-        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent", cardRef);
+        //JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent", cardRef);
     }
 
     private void AutoResizeTextAreaHeight()
@@ -130,11 +125,12 @@
         JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.openColorPicker", colorPickerId, DotNetObjectReference.Create(this));
     }
 
-    private void Blur(KeyboardEventArgs e , ElementReference cardRef)
+    private void Blur(KeyboardEventArgs e, ElementReference cardRef)
     {
-        if(e.Key == "Enter")
+        Console.WriteLine("keydown");
+        if (e.Key == "Enter")
         {
-            JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.blur" , cardRef);
+            JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.blur", cardRef);
         }
     }
 
@@ -152,6 +148,11 @@
 
     private void DeleteCard(int cardIndex)
     {
+        if (card.IsPinned)
+        {
+            card.IsPinned = !card.IsPinned;
+            OnPushPinClicked.InvokeAsync(cardIndex);
+        }
         OnDeleteClicked.InvokeAsync(cardIndex);
     }
 
@@ -166,7 +167,6 @@
     {
         card.BackgroundColor = backgroundColor;
         card.TextColor = textColor;
-
         StateHasChanged();
     }
 }
