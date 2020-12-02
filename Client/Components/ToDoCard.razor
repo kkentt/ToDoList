@@ -2,6 +2,7 @@
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 
+
 <div class="item" @ref="cardRef" style="border-radius:10px; background-color: @card.BackgroundColor; color:@card.TextColor;">
     <div style="position:relative;padding-top:5px; padding-left:1px;padding-right:1px;">
         <textarea class="item-txt-area card-title" type="text" @ref="cardTitleTextAreaRef" @bind="card.Title" @onkeydown='(e => Blur(e , cardRef) )'
@@ -12,8 +13,13 @@
     </div>
 
     <ul style="list-style: none; padding:10px; padding-top:0;padding-bottom:0;">
+        <style>
+            textarea:focus {
+                outline: 0.5px solid black;
+            }
+        </style>
         @foreach (var item in card.Items)
-        {   
+        {
             <li style="padding-top:1.5px;">
                 <div style="display:flex; width:100%;">
                     <div>
@@ -24,6 +30,8 @@
                         </style>
                         <MatCheckbox @bind-Value="item.IsDone"></MatCheckbox>
                     </div>
+
+
                     @if (item.IsDone)
                     {
                         <textarea class="item-txt-area" value="@item.Task" @oninput='(e => {   item.Task = e.Value.ToString();  })' @onkeydown='(e => Blur(e , cardRef))' rows="1"
