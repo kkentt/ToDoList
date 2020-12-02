@@ -19,11 +19,7 @@ window.UIJsLibraryFunctions =
     initializeColorPickerEvent: function (card) {
         var textColor = "";
         var colorInput = card.querySelector(".color-picker");
-        console.log("test initialized success or not;");
         colorInput.addEventListener("input", (event) => {
-            console.log("Trigger color picker drag");
-            debugger
-            console.log(componentObject);
             if (this.isCard) {
                 card.style.background = event.target.value;
                 textColor = this.GetTextColor(event.target.value);
@@ -38,7 +34,6 @@ window.UIJsLibraryFunctions =
         }, false);
 
         colorInput.addEventListener("change", (event) => {
-            console.log("Trigger color picker change");
             componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value, textColor);
         }, false);
     },
@@ -67,7 +62,6 @@ window.UIJsLibraryFunctions =
         $(id).click();
     },
     SetColorPickerObject: function (obj) {
-        console.log("set component object");
         componentObject = obj;
         this.isCard = false;
     },
