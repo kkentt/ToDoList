@@ -1,4 +1,4 @@
-﻿@page "/todo"
+﻿@page "/"
 @using ToDoList.Shared
 @inject IJSRuntime JSRuntime
 @inject AppState AppState
@@ -31,7 +31,7 @@
     }
 
     .item {
-        width: 270px !important;
+        width: 290px !important;
         box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.3)
     }
 
@@ -87,7 +87,7 @@
         @if (pinnedCard != null && pinnedCard.IsPinned)
         {
             <div class="row main-pin" style="justify-content:center;padding:10px;">
-                <@ToDoCard card="@pinnedCard" OnDeleteClicked="RemoveCard" isPinnedComponent="true" />
+                <ToDoCard card="@pinnedCard" OnDeleteClicked="RemoveCard" isPinnedComponent="true" />
             </div>
         }
 
