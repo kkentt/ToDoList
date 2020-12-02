@@ -1,15 +1,70 @@
 ﻿@inherits LayoutComponentBase
+@using ToDoList.Shared
+@inject AppState AppState
+@inject IJSRuntime JSRuntime
 
 <div class="sidebar">
     <NavMenu />
 </div>
 
 <div class="main">
-    <div class="top-row px-4" style="z-index:3">
-        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+    <div class="top-row px-4" style="z-index:3" @ref=toolbarRef>
+        <div style="visibility:@isDefaultColorShown">
+            Default Color
+            @{ var colorPickerId = "DefaultColorPicker"; }
+            <input id="@colorPickerId" class="color-picker" type="color" @onclick="() => OpenColorPicker(colorPickerId)"
+                   value="@AppState.DefaultColor" />
+        </div>
+        <span>&nbsp; &nbsp;</span>
+        <MatSlideToggle TValue="bool" Value="AppState.IsRandomColored" ValueChanged="Toggle" Label=" &nbsp;&nbsp;&nbsp; Use Random Color"></MatSlideToggle>
     </div>
 
     <div class="content px-4">
         @Body
     </div>
 </div>
+
+@code{
+
+    public BackgroundColorModel bgColorModel = new BackgroundColorModel();
+    private string isDefaultColorShown = "";
+    ElementReference toolbarRef;
+
+    protected override void OnInitialized()
+    {
+        isDefaultColorShown = AppState.IsRandomColored ? "hidden" : "visible";
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            InitializeColorPickerEvent(toolbarRef);
+        }
+    }
+
+    private void InitializeColorPickerEvent(ElementReference cardRef)
+    {
+        Console.WriteLine("Initialize color picker event in c#");
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.initializeColorPickerEvent", cardRef);
+    }
+
+    private void Toggle()
+    {
+        AppState.SetIsRandomColored(!AppState.IsRandomColored);
+        //AppState.IsRandomColored = !AppState.IsRandomColored;
+        isDefaultColorShown = AppState.IsRandomColored ? "hidden" : "visible";
+    }
+
+    private void OpenColorPicker(string colorPickerId)
+    {
+        JSRuntime.InvokeVoidAsync("UIJsLibraryFunctions.SetColorPickerObject", DotNetObjectReference.Create(this));
+    }
+
+    [JSInvokable]
+    public void SetBackgroundColor(string backgroundColor, string textColor)
+    {
+        AppState.DefaultColor = backgroundColor;
+        StateHasChanged();
+    }
+}
