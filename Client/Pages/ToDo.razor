@@ -1,7 +1,9 @@
 ﻿@page "/todo"
 @using ToDoList.Shared
-@using ToDoList.Client.Components
 @inject IJSRuntime JSRuntime
+@inject AppState AppState
+@implements IDisposable
+@using ToDoList.Client.Components;
 
 <style>
     #container {
@@ -24,11 +26,6 @@
         visibility: visible;
     }
 
-/*    .card-title:focus + div .pin {
-        background-color:red;
-        color:pink;
-    }*/
-
     .card-title:focus ~ .pin {
         visibility: hidden;
     }
@@ -46,39 +43,43 @@
 </style>
 
 <div id="main" @onclick="AddCard">
-    <div class="col-md-4" style="margin:0 auto;" @onkeyup="@(e => AddCard(e))">
-        <div class="card">
-            <div class="card-container">
-                <div class="card-header">
-                    @if (!string.IsNullOrEmpty(tempCard.Title))
-                    {
-                        <h3 contenteditable="true">@tempCard.Title</h3>
-                    }
-                </div>
-                <div class="card-body">
-                    <ul style="list-style: none;padding:0;">
-                        @if (tempCard.Items != null)
+    <div class="col-md-4" style="margin:0 auto;" @onkeyup="(e => AddCard(e))">
+        <span>
+            <div class="card">
+                <div class="card-container">
+                    <div class="card-header">
+                        @if (!string.IsNullOrEmpty(tempCard.Title))
                         {
-                            @foreach (var item in tempCard.Items)
-                            {
-                                <li>
-                                    <input type="checkbox" @bind="item.IsDone" />
-                                    @if (item.IsDone)
-                                    {
-                                        <del>@item.Task</del>
-                                    }
-                                    else
-                                    {
-                                        @item.Task
-                                    }
-                                </li>
-                            }
+                            <h3 contenteditable="true">@tempCard.Title</h3>
                         }
-                    </ul>
+                    </div>
+                    <div class="card-body" style="padding-bottom:0;">
+                        <ul style="list-style: none;padding:0;">
+                            @if (tempCard.Items != null)
+                            {
+                                @foreach (var item in tempCard.Items)
+                                {
+                                    <li>
+                                        <MatCheckbox @bind-Value="item.IsDone"></MatCheckbox>
+                                        @if (item.IsDone)
+                                        {
+                                            <del>@item.Task</del>
+                                        }
+                                        else
+                                        {
+                                            @item.Task
+                                        }
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                    <MatTextField @bind-Value="newTodo" PlaceHolder="@inputPlaceHolder" FullWidth="true"
+                                  OnKeyUp="@(e => AddItem(e))" @onclick:stopPropagation="true"
+                                  Style="font-size:20px;margin:0; padding:0;"></MatTextField>
                 </div>
-                <input style="width:100%;" placeholder="@inputPlaceHolder" @bind="newTodo" @onkeyup="@(e => AddItem(e))" @onclick:stopPropagation="true" />
             </div>
-        </div>
+        </span>
     </div>
 
     @*Card Component*@
@@ -86,7 +87,7 @@
         @if (pinnedCard != null && pinnedCard.IsPinned)
         {
             <div class="row main-pin" style="justify-content:center;padding:10px;">
-                <ToDoCard card="@pinnedCard" OnDeleteClicked="RemoveCard" isPinnedComponent="true" />
+                <@ToDoCard card="@pinnedCard" OnDeleteClicked="RemoveCard" isPinnedComponent="true" />
             </div>
         }
 
@@ -110,6 +111,8 @@
     private string newTodo { get; set; }
     //end
 
+    private string backgroundColor { get; set; }
+
     private int pinnedIndex { get; set; } = -1;
 
     private TodoCardModel pinnedCard { get; set; }
@@ -120,6 +123,29 @@
     private List<TodoCardModel> cardLst = new List<TodoCardModel>();
     private List<TodoItemModel> itemLst = new List<TodoItemModel>();
 
+    protected override void OnInitialized()
+    {
+        AppState.StateChanged += async (Property)
+            => await AppState_StateChanged(Property);
+    }
+
+    private async Task AppState_StateChanged(bool Property)
+    {
+        Console.WriteLine($"Property has changed to {Property}. ");
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        AppState.StateChanged -= async (Property)
+                   => await AppState_StateChanged(Property);
+    }
+
+    private async Task<string> GetTextColor(string backgroundColor)
+    {
+        string textColor = await JSRuntime.InvokeAsync<string>("UIJsLibraryFunctions.GetTextColor", backgroundColor);
+        return textColor;
+    }
 
     private void RemoveCard(int index)
     {
@@ -171,32 +197,38 @@
         }
     }
 
+    private async void AddNewCard()
+    {
+        if (!string.IsNullOrWhiteSpace(tempCard.Title))
+        {
+            var backgroundColor = AppState.IsRandomColored ? await AppState.GetRandomColor() : AppState.DefaultColor;
+            cardLst.Add(new TodoCardModel()
+            {
+                Title = tempCard.Title,
+                CardNo = cardNo++,
+                Items = tempCard.Items,
+                BackgroundColor = backgroundColor,
+                TextColor = await GetTextColor(backgroundColor),
+            });
+            // reset tempCard
+            tempCard.Title = string.Empty;
+            inputPlaceHolder = "Title";
+            tempCard.Items = new List<TodoItemModel>();
+            StateHasChanged();
+        }
+    }
+
     private void AddCard(KeyboardEventArgs e)
     {
         if (e.Key == "Escape")
         {
-            if (!string.IsNullOrWhiteSpace(tempCard.Title))
-            {
-                cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items, });
-                // reset tempCard
-                tempCard.Title = string.Empty;
-                inputPlaceHolder = "Title";
-                tempCard.Items = new List<TodoItemModel>();
-            }
+            AddNewCard();
         }
     }
 
     private void AddCard(MouseEventArgs m)
     {
-        if (!string.IsNullOrWhiteSpace(tempCard.Title))
-        {
-            cardLst.Add(new TodoCardModel() { Title = tempCard.Title, CardNo = cardNo++, Items = tempCard.Items });
-            Console.WriteLine("Added to list");
-            // reset tempCard
-            tempCard.Title = string.Empty;
-            inputPlaceHolder = "Title";
-            tempCard.Items = new List<TodoItemModel>();
-        }
+        AddNewCard();
     }
 }
 

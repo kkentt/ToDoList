@@ -1,4 +1,5 @@
 ﻿var componentObject = null;
+var isCard = false;
 
 window.UIJsLibraryFunctions =
 {
@@ -18,34 +19,38 @@ window.UIJsLibraryFunctions =
     initializeColorPickerEvent: function (card) {
         var textColor = "";
         var colorInput = card.querySelector(".color-picker");
+        console.log("test initialized success or not;");
         colorInput.addEventListener("input", (event) => {
-            card.style.background = event.target.value;
-            textColor = getContrastYIQ(event.target.value);
-            card.style.setProperty("color", textColor, "important");
+            console.log("Trigger color picker drag");
+            debugger
+            console.log(componentObject);
+            if (this.isCard) {
+                card.style.background = event.target.value;
+                textColor = this.GetTextColor(event.target.value);
+                card.style.setProperty("color", textColor, "important");
 
-            //call Blazor function
-            var textAreas = card.querySelectorAll(".item-txt-area");
-            for (i = 0; i < textAreas.length; i++) {
-                textAreas[i].style.background = event.target.value;
-                textAreas[i].style.setProperty("color", textColor, "important");
+                var textAreas = card.querySelectorAll(".item-txt-area");
+                for (i = 0; i < textAreas.length; i++) {
+                    textAreas[i].style.background = event.target.value;
+                    textAreas[i].style.setProperty("color", textColor, "important");
+                }
             }
         }, false);
 
         colorInput.addEventListener("change", (event) => {
+            console.log("Trigger color picker change");
             componentObject.invokeMethodAsync('SetBackgroundColor', event.target.value, textColor);
         }, false);
-
-        //Get text color black or white based on background color
-        function getContrastYIQ(hexcolor) {
-            hexcolor = hexcolor.replace("#", "");
-            var r = parseInt(hexcolor.substr(0, 2), 16);
-            var g = parseInt(hexcolor.substr(2, 2), 16);
-            var b = parseInt(hexcolor.substr(4, 2), 16);
-            var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-            return (yiq >= 128) ? 'black' : 'white';
-        }
     },
-
+    //Get text color black or white based on background color in hex value
+    GetTextColor: function (backgroundColor) {
+        backgroundColor = backgroundColor.replace("#", "");
+        var r = parseInt(backgroundColor.substr(0, 2), 16);
+        var g = parseInt(backgroundColor.substr(2, 2), 16);
+        var b = parseInt(backgroundColor.substr(4, 2), 16);
+        var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+        return (yiq >= 128) ? 'black' : 'white';
+    },
     AutoResizeTextArea: function (card) {
         var items = card.querySelectorAll(".item-txt-area")
         if (items.length > 0) {
@@ -57,10 +62,15 @@ window.UIJsLibraryFunctions =
     },
     openColorPicker: function (colorPickerId, obj) {
         componentObject = obj;
+        this.isCard = true;
         var id = "#" + colorPickerId;
         $(id).click();
     },
-
+    SetColorPickerObject: function (obj) {
+        console.log("set component object");
+        componentObject = obj;
+        this.isCard = false;
+    },
     blur: function (card) {
         var textAreas = card.querySelectorAll(".item-txt-area")
         for (i = 0; i < textAreas.length; i++) {
